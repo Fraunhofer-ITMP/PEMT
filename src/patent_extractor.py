@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Script for scraping SureChem for extracting all patent related information."""
+"""Script for extracting patent literature from SureChEMBL."""
 
 import logging
 import os

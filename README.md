@@ -54,7 +54,7 @@
 PEMT is a patent extractor tool that enables users to retrieve patents relevant to drug discovery. The overall workflow of the tool can be seen in the figure below:
 
 <p align="center">
-  <img src="../PEMT/docs/source/framework.jpg">
+  <img src="docs/source/framework.jpg">
 </p>
 
 ## Installation

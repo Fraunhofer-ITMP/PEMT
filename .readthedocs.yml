@@ -1,0 +1,16 @@
+# See: https://docs.readthedocs.io/en/latest/yaml-config.html
+
+build:
+    image: latest
+python:
+  version: 3.8
+  pip_install: true
+  extra_requirements:
+  - docs
+
+sphinx:
+  fail_on_warning: true
+
+formats:
+  - pdf
+  - epub

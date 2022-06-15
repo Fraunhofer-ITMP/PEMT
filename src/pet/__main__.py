@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""PEMT main."""
+"""PET main."""
 
 from .cli import main
 

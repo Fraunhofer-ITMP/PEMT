@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 @click.group()
 def main():
-    """Run PEMT."""
+    """Run PET."""
     logging.basicConfig(format="%(asctime)s - %(levelname)s - %(name)s - %(message)s")
 
 input_data = click.option(
@@ -168,7 +168,7 @@ def run_patent_extractor(
     click.echo(f"Data file can be found under {PATENT_DIR}")
 
 
-@main.command(help='Run the PEMT tool with gene data')
+@main.command(help='Run the PET tool with gene data')
 @analysis_name
 @input_data
 @input_data_type
@@ -176,11 +176,11 @@ def run_patent_extractor(
 @chromedriver_path
 @system_name
 @patent_year
-def run_pemt(
+def run_pet(
     name: str, data: str, input_type: str, uniprot: bool, chromedriver_path: str, os: str, year: str
 ) -> None:
-    """Runs the PEMT tool with all the components together."""
-    click.echo(f"Starting to run PEMT workflow for {name}")
+    """Runs the PET tool with all the components together."""
+    click.echo(f"Starting to run PET workflow for {name}")
 
     click.echo(
         f"Running the chemical extractor pipeline"

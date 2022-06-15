@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="../PEMT/docs/source/logoIME2.png">
+  <img src="../PET/docs/source/logoIME2.png">
 </p>
 
 <h1 align="center">
-  PEMT: A tool for extracting patent literature in drug discovery
+  PET: A tool for extracting patent literature in drug discovery
   <br/>
 
 [comment]: <> (  <a href='https://travis-ci.com/github/hybrid-kg'>)
@@ -32,7 +32,7 @@
 
 [comment]: <> (  <img src="https://img.shields.io/pypi/pyversions/clep" alt="CLEP Python versions">)
 
-[comment]: <> (  <a href="https://github.com/Fraunhofer-ITMP/PEMT/blob/master/LICENSE">)
+[comment]: <> (  <a href="https://github.com/Fraunhofer-ITMP/PET/blob/master/LICENSE">)
 
 [comment]: <> (    <img src="https://img.shields.io/pypi/l/clep" alt="MIT">)
 
@@ -51,7 +51,7 @@
 
 ## General Info
 
-PEMT is a patent extractor tool that enables users to retrieve patents relevant to drug discovery. The overall workflow of the tool can be seen in the figure below:
+PET is a patent extractor tool that enables users to retrieve patents relevant to drug discovery. The overall workflow of the tool can be seen in the figure below:
 
 <p align="center">
   <img src="docs/source/framework.jpg">
@@ -62,42 +62,42 @@ PEMT is a patent extractor tool that enables users to retrieve patents relevant 
 [comment]: <> (The code can be installed from [PyPI]&#40;https://pypi.org/project/clep/&#41; with:)
 
 ```bash
-$ pip install pemt
+$ pip install pet
 ```
 
-The most recent code can be installed from the source on [GitHub](https://github.com/Fraunhofer-ITMP/PEMT) with:
+The most recent code can be installed from the source on [GitHub](https://github.com/Fraunhofer-ITMP/PET) with:
 
 ```bash
-$ pip install git+https://github.com/Fraunhofer-ITMP/PEMT.git
+$ pip install git+https://github.com/Fraunhofer-ITMP/PET.git
 ```
 
 Alternatively, for developer the tool can be installed in an editable mode as shown below:
 
 ```bash
-$ git clone https://github.com/Fraunhofer-ITMP/PEMT.git
-$ conda create --name pemt python=3.8
-$ conda activate pemt
-$ cd PEMT
-$ pip install pemt
+$ git clone https://github.com/Fraunhofer-ITMP/PET.git
+$ conda create --name pet python=3.8
+$ conda activate pet
+$ cd PET
+$ pip install pet
 ```
 
-For developers, the repository can be cloned from [GitHub](https://github.com/Fraunhofer-ITMP/PEMT) and installed in editable mode with:
+For developers, the repository can be cloned from [GitHub](https://github.com/Fraunhofer-ITMP/PET) and installed in editable mode with:
 
 ```bash
-$ git clone https://github.com/Fraunhofer-ITMP/PEMT.git
-$ cd PEMT
+$ git clone https://github.com/Fraunhofer-ITMP/PET.git
+$ cd PET
 $ pip install -e .
 ```
 
 ## Documentation
 
-Read the [official docs](https://pemt.readthedocs.io/en/latest/) for more information.
+Read the [official docs](https://pet.readthedocs.io/en/latest/) for more information.
 
 ## Input Data Formats
 
 ### Data
 
-For running PEMT from the gene level, you need the input file with the following structure:
+For running PET from the gene level, you need the input file with the following structure:
 
 | symbol | uniprot | 
 | ------ | -------- | 
@@ -105,7 +105,7 @@ For running PEMT from the gene level, you need the input file with the following
 | HGNC_Symbol_2 | Uniprot_ID_2
 | HGNC_Symbol_3 | Uniprot_ID_3  
 
-For running PEMT from the chemical level, you need the input file with the following structure:
+For running PET from the chemical level, you need the input file with the following structure:
 
 | chembl |  
 | ------ | 
@@ -118,7 +118,7 @@ For running PEMT from the chemical level, you need the input file with the follo
 
 ## Usage
 
-In-order to use PEMT, an installation of [**chromedriver**](https://chromedriver.chromium.org/) is **required**.
+In-order to use PET, an installation of [**chromedriver**](https://chromedriver.chromium.org/) is **required**.
 
 As mentioned above, the tool has a two-step approach. Each of these steps can be run individually as well as together as show belwo:
 
@@ -126,7 +126,7 @@ As mentioned above, the tool has a two-step approach. Each of these steps can be
 The following command links chemicals to genes of interest based on causality. In this command it is necessary to indicate whether the file contains uniprot ids or not with the `--uniprot` or `--no-uniprot` parameter.
 
 ```bash
-$ pemt run-chemical-extractor --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --input-type=<DATA FILE SEPARATOR> --uniprot
+$ pet run-chemical-extractor --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --input-type=<DATA FILE SEPARATOR> --uniprot
 
 ```
 
@@ -134,25 +134,25 @@ $ pemt run-chemical-extractor --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --i
 The following command interlinks chemicals to patent literature publicly available. 
 
 ```bash
-$ pemt run_patent_extractor --data --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --input-type=<DATA FILE SEPARATOR> --chromedriver-path=<PATH TO CHROMEDRIVER> --os=<OS NAME>
+$ pet run_patent_extractor --data --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --input-type=<DATA FILE SEPARATOR> --chromedriver-path=<PATH TO CHROMEDRIVER> --os=<OS NAME>
 ```
 
 We also allow the flexibility to start the pipeline from this step, if the user has list of chemicals in the right format as indicated above. The user then has to use the tag `--chemical` and provide a respective `--chemical-data` path.
 
-3. **PEMT workflow**
+3. **PET workflow**
 The following command generates the patent enrichment on the gene data where the gene data file is a TSV file containing uniprot identifiers.
 
 ```bash
-$ pemt run-pemt --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --input-type=<DATA FILE SEPARATOR> --chromedriver-path=<PATH TO CHROMEDRIVER> --os=<OS NAME>
+$ pet run-pet --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --input-type=<DATA FILE SEPARATOR> --chromedriver-path=<PATH TO CHROMEDRIVER> --os=<OS NAME>
 ```
 
 ## Issues
 
-If you have difficulties using PEMT, please open an issue at our [GitHub](https://github.com/Fraunhofer-ITMP/PEMT) repository.
+If you have difficulties using PET, please open an issue at our [GitHub](https://github.com/Fraunhofer-ITMP/PET) repository.
 
 [comment]: <> (### Citation)
 
-[comment]: <> (If you have found PEMT useful in your work, please consider citing:)
+[comment]: <> (If you have found PET useful in your work, please consider citing:)
 
 [comment]: <> ([**CLEP: A Hybrid Data- and Knowledge- Driven Framework for Generating Patient Representations**]&#40;https://doi.org/10.1093/bioinformatics/btab340)
 
@@ -168,4 +168,4 @@ If you have difficulties using PEMT, please open an issue at our [GitHub](https:
 
 ## Disclaimer
 
-PEMT is a scientific tool that has been developed in an academic capacity, and thus comes with no warranty or guarantee of maintenance, support, or back-up of data.
+PET is a scientific tool that has been developed in an academic capacity, and thus comes with no warranty or guarantee of maintenance, support, or back-up of data.

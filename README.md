@@ -99,8 +99,8 @@ Read the [official docs](https://pemt.readthedocs.io/en/latest/) for more inform
 
 For running PEMT from the gene level, you need the input file with the following structure:
 
-| symbol | uniprot | 
-| ------ | -------- | 
+| symbol | uniprot |
+| ------ | -------- |
 | HGNC_Symbol_1 | Uniprot_ID_1
 | HGNC_Symbol_2 | Uniprot_ID_2
 | HGNC_Symbol_3 | Uniprot_ID_3  
@@ -108,8 +108,8 @@ For running PEMT from the gene level, you need the input file with the following
 For running PEMT from the chemical level, you need the input file with the following structure:
 
 | chembl |  
-| ------ | 
-| ChEMBL_ID_1 
+| ------ |
+| ChEMBL_ID_1
 | ChEMBL_ID_2
 | ChEMBL_ID_3
 
@@ -131,10 +131,10 @@ $ pemt run-chemical-extractor --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --i
 ```
 
 2. **Patent enrichment**
-The following command interlinks chemicals to patent literature publicly available. 
+The following command interlinks chemicals to patent literature publicly available.
 
 ```bash
-$ pemt run_patent_extractor --data --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --input-type=<DATA FILE SEPARATOR> --chromedriver-path=<PATH TO CHROMEDRIVER> --os=<OS NAME>
+$ pemt run_patent_extractor --name=<ANALYSIS NAME> --chromedriver-path=<PATH TO CHROMEDRIVER> --os=<OS NAME> --no-chemical
 ```
 
 We also allow the flexibility to start the pipeline from this step, if the user has list of chemicals in the right format as indicated above. The user then has to use the tag `--chemical` and provide a respective `--chemical-data` path.

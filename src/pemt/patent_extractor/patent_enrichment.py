@@ -114,7 +114,7 @@ def get_valid_patent_list(
 
     patent_info = set()
 
-    logger.debug(f"Looking into {range_val} patents")
+    logger.info(f"Looking into {range_val} patents for {schembl_id}")
 
     for patent_count in range(1, range_val + 1):
         for i in range(2, 52):  # max number of elements in each page

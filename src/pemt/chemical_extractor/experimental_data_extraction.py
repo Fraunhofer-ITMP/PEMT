@@ -136,7 +136,7 @@ def extract_chemicals(
 
     # Load chembl target mapper files
     chembl_mapper = pd.read_csv(
-        f"https://ftp.ebi.ac.uk/pub/databases/chembl/ChEMBLdb/releases/chembl_{chembl_version}/chembl_uniprot_mapping.txt",
+        f"{MAPPER_DIR}/chembl_uniprot_mapping.txt",
         dtype=str,
         skiprows=1,
         sep="\t",

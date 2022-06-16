@@ -1,4 +1,4 @@
-name: test-formatter
+name: code-formatter
 on: [push]
 jobs:
   linting:

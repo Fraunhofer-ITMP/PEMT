@@ -134,7 +134,7 @@ $ pemt run-chemical-extractor --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --i
 The following command interlinks chemicals to patent literature publicly available.
 
 ```bash
-$ pemt run_patent_extractor --name=<ANALYSIS NAME> --chromedriver-path=<PATH TO CHROMEDRIVER> --os=<OS NAME> --no-chemical
+$ pemt run-patent-extractor --name=<ANALYSIS NAME> --chromedriver-path=<PATH TO CHROMEDRIVER> --os=<OS NAME> --no-chemical
 ```
 
 We also allow the flexibility to start the pipeline from this step, if the user has list of chemicals in the right format as indicated above. The user then has to use the tag `--chemical` and provide a respective `--chemical-data` path.

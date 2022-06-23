@@ -4,18 +4,17 @@ repos:
     hooks:
       - id: trailing-whitespace
         exclude: '^data/'
-        files: '(\.(go|md|sh|yml|yaml|json|ini|rst)|Dockerfile.*)$'
-    - id: end-of-file-fixer
-      exclude: '^data/'
-    - id: debug-statements
-    - id: check-yaml
-      - id: requirements-txt-fixer
+      - id: end-of-file-fixer
+        exclude: '^data/'
+      - id: debug-statements
+      - id: check-yaml
   - repo: https://github.com/pycqa/isort
     rev: 5.5.4
     hooks:
       - id: isort
-        args: ["--profile", "black"]
+        args: [ "--profile", "black" ]
+        exclude: '^data/'
   - repo: https://github.com/psf/black
     rev: 22.3.0
     hooks:
-    - id: black
+      - id: black

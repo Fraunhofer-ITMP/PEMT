@@ -2,10 +2,14 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v1.2.3
     hooks:
-    - id: trailing-whitespace
+      - id: trailing-whitespace
+        exclude: '^data/'
+        files: '(\.(go|md|sh|yml|yaml|json|ini|rst)|Dockerfile.*)$'
     - id: end-of-file-fixer
+      exclude: '^data/'
     - id: debug-statements
     - id: check-yaml
+      - id: requirements-txt-fixer
   - repo: https://github.com/pycqa/isort
     rev: 5.5.4
     hooks:

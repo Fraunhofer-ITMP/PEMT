@@ -51,7 +51,10 @@ os.makedirs(f"{PATENT_DIR}", exist_ok=True)
 
 
 def get_valid_patent_list(
-    schembl_id: str, system: str, chrome_driver_path: str, year: int
+    schembl_id: str,
+    system: str,
+    chrome_driver_path: str,
+    year: int
 ) -> Tuple[set, int]:
     """Get valid patents from SureChEMBL based on their IPC criteria and time period.
 
@@ -125,7 +128,7 @@ def get_valid_patent_list(
 
     logger.info(f"Looking into {range_val} patents for {schembl_id}")
 
-    for patent_count in tqdm(range(1, range_val + 1)):
+    for patent_count in range(1, range_val + 1):
         for i in range(2, 52):  # max number of elements in each page
             try:
                 if system not in ["linux", "mac"]:
@@ -217,6 +220,7 @@ def extract_patent(
     :param analysis_name: Name of the analysis.
     :param os_system: The OS on which the code is running. It can be either of these: linux, mac, window.
     :param chrome_driver_path: The path of the chrome driver is located.
+    :param patent_year: The cutt-off year for searching the patent documents
     """
     df = pd.read_csv(
         f"{PATENT_DIR}/{analysis_name}_chemicals.tsv",

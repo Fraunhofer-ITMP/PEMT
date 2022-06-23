@@ -18,8 +18,11 @@ try:
 except ImportError:
     raise ValueError("please install selenium before running this script")
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
 
 chrome_options = Options()
 chrome_options.add_argument("--headless")
@@ -94,6 +97,12 @@ def get_valid_patent_list(
 
     time.sleep(15)
 
+    try:
+        element_present = EC.presence_of_element_located((By.ID, 'patent-hits-container'))
+        WebDriverWait(driver, 30).until(element_present)
+    except TimeoutException:
+        logger.info("Timed out waiting for page to load")
+
     # Get the link for opening patent table
     try:
         new_link = driver.find_element_by_xpath(
@@ -116,7 +125,7 @@ def get_valid_patent_list(
 
     logger.info(f"Looking into {range_val} patents for {schembl_id}")
 
-    for patent_count in range(1, range_val + 1):
+    for patent_count in tqdm(range(1, range_val + 1)):
         for i in range(2, 52):  # max number of elements in each page
             try:
                 if system not in ["linux", "mac"]:
@@ -304,6 +313,7 @@ def extract_patent(
             cache_count = 0
 
     patent_df.drop_duplicates(inplace=True)
+    patent_df = patent_df[patent_df['patent_id'] != None]
     patent_df.to_csv(
         f"{PATENT_DIR}/{analysis_name}_patent_data.tsv", sep="\t", index=False
     )

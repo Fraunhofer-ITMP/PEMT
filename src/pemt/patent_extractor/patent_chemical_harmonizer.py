@@ -8,6 +8,7 @@ import os
 from collections import defaultdict
 
 import pandas as pd
+from pubchempy import get_synonyms
 from tqdm import tqdm
 
 from pemt.constants import MAPPER_DIR, PATENT_DIR
@@ -16,10 +17,41 @@ from pemt.utils import get_chemical_names
 logger = logging.getLogger(__name__)
 
 
+def get_surechembl_id(
+    chemical_id: str,
+    chemical_name: str,
+    chemical_mapper: dict
+) -> str:
+    """Method to get SureChEMBL identifier of chemicals.
+
+    :param chemical_id: ChEMBL identifier of the chemical
+    :param chemical_name: Name of the chemical
+    :param chemical_mapper: Dictionary of identifier mapping between ChEMBL and SureChEMBL
+    """
+    surechembl_id = chemical_mapper.get(chemical_id)
+
+    if surechembl_id:
+        return surechembl_id
+
+    synm_dict = get_synonyms(chemical_name, namespace='name')[0]
+
+    try:
+        surechembl_id = [
+            synonym
+            for synonym in synm_dict['Synonym']
+            if synonym.startswith('SCHEMBL')
+        ][0]
+    except IndexError:
+        return None
+
+    return surechembl_id
+
+
 def harmonize_chemicals(analysis_name: str, from_genes: bool = True) -> None:
     """Method that allows mapping from ChEMBL to SureChEMBL identifiers.
 
     :param analysis_name: The name of the analysis you want to run. This name would be used to save the resultant file.
+    :param from_genes: Boolean indicating where the process needs to get chemicals based on genes or not.
     """
 
     # Load cached data if it exists
@@ -84,7 +116,11 @@ def harmonize_chemicals(analysis_name: str, from_genes: bool = True) -> None:
 
                 # Store chembl to surechembl mapping in separate file
                 if chembl_id not in cache_dict:
-                    surechembl_id = chemical_mapper.get(chembl_id)
+                    surechembl_id = get_surechembl_id(
+                        chemical_id=chembl_id,
+                        chemical_name=chemical_names[chembl_id],
+                        chemical_mapper=chemical_mapper
+                    )
 
                     if not surechembl_id:
                         continue
@@ -130,7 +166,11 @@ def harmonize_chemicals(analysis_name: str, from_genes: bool = True) -> None:
 
             # Store chembl to surechembl mapping in separate file
             if chembl_id not in cache_dict:
-                surechembl_id = chemical_mapper.get(chembl_id)
+                surechembl_id = get_surechembl_id(
+                    chemical_id=chembl_id,
+                    chemical_name=chemical_names[chembl_id],
+                    chemical_mapper=chemical_mapper
+                )
 
                 if not surechembl_id:
                     continue

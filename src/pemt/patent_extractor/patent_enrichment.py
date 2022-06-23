@@ -20,8 +20,8 @@ except ImportError:
 
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 chrome_options = Options()
@@ -51,10 +51,7 @@ os.makedirs(f"{PATENT_DIR}", exist_ok=True)
 
 
 def get_valid_patent_list(
-    schembl_id: str,
-    system: str,
-    chrome_driver_path: str,
-    year: int
+    schembl_id: str, system: str, chrome_driver_path: str, year: int
 ) -> Tuple[set, int]:
     """Get valid patents from SureChEMBL based on their IPC criteria and time period.
 
@@ -101,7 +98,9 @@ def get_valid_patent_list(
     time.sleep(15)
 
     try:
-        element_present = EC.presence_of_element_located((By.ID, 'patent-hits-container'))
+        element_present = EC.presence_of_element_located(
+            (By.ID, "patent-hits-container")
+        )
         WebDriverWait(driver, 30).until(element_present)
     except TimeoutException:
         logger.info("Timed out waiting for page to load")
@@ -317,7 +316,7 @@ def extract_patent(
             cache_count = 0
 
     patent_df.drop_duplicates(inplace=True)
-    patent_df = patent_df[patent_df['patent_id'] != None]
+    patent_df.dropna(subset=["patent_id", "date", "ipc"], inplace=True)
     patent_df.to_csv(
         f"{PATENT_DIR}/{analysis_name}_patent_data.tsv", sep="\t", index=False
     )

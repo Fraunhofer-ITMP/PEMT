@@ -18,9 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_surechembl_id(
-    chemical_id: str,
-    chemical_name: str,
-    chemical_mapper: dict
+    chemical_id: str, chemical_name: str, chemical_mapper: dict
 ) -> str:
     """Method to get SureChEMBL identifier of chemicals.
 
@@ -33,13 +31,11 @@ def get_surechembl_id(
     if surechembl_id:
         return surechembl_id
 
-    synm_dict = get_synonyms(chemical_name, namespace='name')[0]
+    synm_dict = get_synonyms(chemical_name, namespace="name")[0]
 
     try:
         surechembl_id = [
-            synonym
-            for synonym in synm_dict['Synonym']
-            if synonym.startswith('SCHEMBL')
+            synonym for synonym in synm_dict["Synonym"] if synonym.startswith("SCHEMBL")
         ][0]
     except IndexError:
         return None
@@ -61,18 +57,18 @@ def harmonize_chemicals(analysis_name: str, from_genes: bool = True) -> None:
             sep="\t",
             dtype=str,
         )
-        if "schembl_id" not in list(chemical_df.columns):
-            cache_dict = {}
-        else:
-            cache_dict = pd.read_csv(
-                f"{PATENT_DIR}/{analysis_name}_chemicals.tsv",
-                sep="\t",
-                dtype=str,
-                index_col="chembl",
-            ).to_dict()["schembl_id"]
     else:
         chemical_df = pd.DataFrame(columns=["chembl", "schembl_id", "name"])
+
+    if "schembl_id" not in list(chemical_df.columns):
         cache_dict = {}
+    else:
+        cache_dict = pd.read_csv(
+            f"{PATENT_DIR}/{analysis_name}_chemicals.tsv",
+            sep="\t",
+            dtype=str,
+            index_col="chembl",
+        ).to_dict()["schembl_id"]
 
     # Load chembl - schembl mapper
     with open(f"{MAPPER_DIR}/chemical_mapper.json") as f:
@@ -119,7 +115,7 @@ def harmonize_chemicals(analysis_name: str, from_genes: bool = True) -> None:
                     surechembl_id = get_surechembl_id(
                         chemical_id=chembl_id,
                         chemical_name=chemical_names[chembl_id],
-                        chemical_mapper=chemical_mapper
+                        chemical_mapper=chemical_mapper,
                     )
 
                     if not surechembl_id:
@@ -169,7 +165,7 @@ def harmonize_chemicals(analysis_name: str, from_genes: bool = True) -> None:
                 surechembl_id = get_surechembl_id(
                     chemical_id=chembl_id,
                     chemical_name=chemical_names[chembl_id],
-                    chemical_mapper=chemical_mapper
+                    chemical_mapper=chemical_mapper,
                 )
 
                 if not surechembl_id:
@@ -202,6 +198,8 @@ def harmonize_chemicals(analysis_name: str, from_genes: bool = True) -> None:
                         f"{MAPPER_DIR}/{analysis_name}_chemical_names.json", "w"
                     ) as f:
                         json.dump(chemical_names, f, ensure_ascii=False, indent=2)
+
+    chemical_df.dropna(subset=["schembl_id"], inplace=True)
 
     chemical_df.to_csv(
         f"{PATENT_DIR}/{analysis_name}_chemicals.tsv", sep="\t", index=False

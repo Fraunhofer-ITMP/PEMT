@@ -31,7 +31,10 @@ def get_surechembl_id(
     if surechembl_id:
         return surechembl_id
 
-    synm_dict = get_synonyms(chemical_name, namespace="name")[0]
+    try:
+        synm_dict = get_synonyms(chemical_name, namespace="name")[0]
+    except IndexError:
+        return None
 
     try:
         surechembl_id = [

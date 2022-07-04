@@ -57,18 +57,17 @@ def harmonize_chemicals(analysis_name: str, from_genes: bool = True) -> None:
             sep="\t",
             dtype=str,
         )
-    else:
-        chemical_df = pd.DataFrame(columns=["chembl", "schembl_id", "name"])
 
-    if "schembl_id" not in list(chemical_df.columns):
-        cache_dict = {}
-    else:
         cache_dict = pd.read_csv(
             f"{PATENT_DIR}/{analysis_name}_chemicals.tsv",
             sep="\t",
             dtype=str,
             index_col="chembl",
         ).to_dict()["schembl_id"]
+
+    else:
+        chemical_df = pd.DataFrame(columns=["chembl", "schembl_id", "name"])
+        cache_dict = {}
 
     # Load chembl - schembl mapper
     with open(f"{MAPPER_DIR}/chemical_mapper.json") as f:

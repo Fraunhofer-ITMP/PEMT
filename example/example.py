@@ -118,35 +118,6 @@ def run_from_gene_pipeline(name: str, genes: list, os: str):
     return
 
 
-def run_from_patent_pipeline(name: str, chemical_data: str, os: str):
-    df = pd.read_csv(chemical_data, sep="\t", dtype=str)
-
-    df.to_csv(f"{PATENT_DIR}/{name}_chemicals.tsv", sep="\t", index=False)
-
-    harmonize_chemicals(analysis_name=name, from_genes=False)
-
-    patent_df = extract_patent(
-        analysis_name=name,
-        chrome_driver_path=chromedriver_path,
-        os_system=os,
-        patent_year=2000,
-    )
-
-    if patent_df.empty:
-        logger.info(f"No patents found!")
-        return None
-
-    # Since the original patent data has chemical with no patents, we remove those entries from the data
-    patent_df = patent_df[~patent_df["patent_id"].isna()]
-    patent_df.to_csv(
-        f"{PATENT_DIR}/cleaned_{name}_patent_data.tsv", sep="\t", index=False
-    )
-
-    logger.info(f"Done with retrival of patents")
-    logger.info(f"Data file can be found under {PATENT_DIR}")
-    return
-
-
 def main():
     """Main function to demonstrate usecase of PEMT."""
 

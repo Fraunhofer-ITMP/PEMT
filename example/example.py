@@ -107,12 +107,6 @@ def run_from_gene_pipeline(name: str, genes: list, os: str):
         logger.info(f"No patents found!")
         return None
 
-    # Since the original patent data has chemical with no patents, we remove those entries from the data
-    patent_df = patent_df[~patent_df["patent_id"].isna()]
-    patent_df.to_csv(
-        f"{PATENT_DIR}/cleaned_{name}_patent_data.tsv", sep="\t", index=False
-    )
-
     logger.info(f"Done with retrival of patents")
     logger.info(f"Data file can be found under {PATENT_DIR}")
     return

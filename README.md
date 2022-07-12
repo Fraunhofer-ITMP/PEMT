@@ -1,42 +1,15 @@
-<p align="center">
-  <img src="../PET/docs/source/logoIME2.png">
-</p>
-
 <h1 align="center">
   PEMT: A tool for extracting patent literature in drug discovery
   <br/>
-
-[comment]: <> (  <a href='https://travis-ci.com/github/hybrid-kg'>)
-
-[comment]: <> (     <img src="https://travis-ci.com/hybrid-kg/clep.svg?branch=master" />)
-
-[comment]: <> (  </a>)
-
-[comment]: <> (  <a href='https://clep.readthedocs.io/en/latest/?badge=latest'>)
-
-[comment]: <> (    <img src='https://readthedocs.org/projects/clep/badge/?version=latest' alt='Documentation Status' />)
-
-[comment]: <> (  </a>)
-
-[comment]: <> (  <a href="https://zenodo.org/badge/latestdoi/209278408">)
-
-[comment]: <> (    <img src="https://zenodo.org/badge/209278408.svg" alt="DOI">)
-
-[comment]: <> (  </a>)
-
-[comment]: <> (  <a href="https://pypi.org/project/clep/">)
-
-[comment]: <> (    <img src="https://img.shields.io/pypi/v/clep" alt="CLEP on PyPI">)
-
-[comment]: <> (  </a>)
-
-[comment]: <> (  <img src="https://img.shields.io/pypi/pyversions/clep" alt="CLEP Python versions">)
-
-[comment]: <> (  <a href="https://github.com/Fraunhofer-ITMP/PET/blob/master/LICENSE">)
-
-[comment]: <> (    <img src="https://img.shields.io/pypi/l/clep" alt="MIT">)
-
-[comment]: <> (  </a>)
+    <a href='https://pemt.readthedocs.io/en/latest/?badge=latest'>
+        <img src='https://readthedocs.org/projects/pemt/badge/?version=latest' alt='Documentation Status' />
+    </a>
+    <a href="https://pypi.org/project/PEMT/">
+        <img src="https://img.shields.io/pypi/v/PEMT" alt="PEMT on PyPI">
+    </a>
+    <a href="https://github.com/Fraunhofer-ITMP/PET/blob/master/LICENSE">
+        <img src="https://img.shields.io/pypi/l/PEMT" alt="MIT">
+    </a>
 </h1>
 
 ## Table of Contents

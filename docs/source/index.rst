@@ -2,15 +2,12 @@ Welcome to PEMT's documentation!
 ===================================
 **Release notes** : https://github.com/Fraunhofer-ITMP/PEMT/releases
 
-.. image:: ./logo.jpg
-    :align: center
-
 .. raw:: html
 
    <h1 align="center">
-     <img src="https://travis-ci.com/Fraunhofer-ITMP/PEMT.svg?branch=master" />
      <img src='https://readthedocs.org/projects/pemt/badge/?version=latest' alt='Documentation Status' />
-     <img src='https://img.shields.io/github/license/Fraunhofer-ITMP/PEMT?color=blue' alt='GitHub License' />
+     <img src="https://img.shields.io/pypi/l/PEMT" alt="MIT">
+     <img src="https://img.shields.io/pypi/v/PEMT" alt="PEMT on PyPI">
    </h1>
 
 PEMT: A patent enrichment tool for drug discovery.

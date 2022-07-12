@@ -12,6 +12,9 @@ Core Module APIs
 Gene Harmonizer
 ~~~~~~~~~~~~~~~
 
+.. automodule:: pemt.utils
+   :members:
+
 .. autofunction:: pemt.utils.uniprot_to_chembl()
 
 .. autofunction:: pemt.utils.hgnc_to_chembl()

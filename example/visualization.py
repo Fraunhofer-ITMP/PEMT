@@ -68,7 +68,10 @@ def chemical_patent_counter():
     chemical_counter = chemical_patent_df["chembl"].value_counts().reset_index()
     chemical_counter.columns = ["chembl", "patent counts"]
 
+    patents = set(chemical_patent_df["patent_id"].unique())
+
     print(f"Number of chemicals - {chemical_counter.shape[0]}")
+    print(f"Number of patents - {len(patents)}")
     print(chemical_counter["patent counts"].value_counts())
 
 
@@ -79,7 +82,7 @@ def patent_analysis():
     )
     chemical_patent_df = chemical_patent_df[chemical_patent_df["patent_id"].notna()]
 
-    patents = set(chemical_patent_df["patent_id"].to_list())
+    patents = set(chemical_patent_df["patent_id"].unique())
 
     countries = defaultdict(int)
     patent_position = defaultdict(int)
@@ -93,18 +96,21 @@ def patent_analysis():
     print(countries)
     print(patent_position)
 
-    patent_year = defaultdict(int)
-    ipc_codes = defaultdict(int)
+    patent_year = defaultdict(set)
+    ipc_codes = defaultdict(set)
     assignees = set()
 
     for row in tqdm(chemical_patent_df.values):
         (chemical_id, surechembl_id, patent_id, date, ipc, assignee) = row
 
         year = date.split("-")[0]
-        patent_year[year] += 1
+        patent_year[year].add(patent_id)
         code = ipc.split()[0]
-        ipc_codes[code] += 1
+        ipc_codes[code].add(patent_id)
         assignees.add(assignee)
+
+    patent_year = {year: len(patents) for year, patents in patent_year.items()}
+    ipc_codes = {ipc: len(patents) for ipc, patents in ipc_codes.items()}
 
     print(ipc_codes)
 
@@ -190,8 +196,11 @@ def gene_data_generator():
 
 def assignee_analysis():
     """Method to normalize the assignee to their assignee type."""
-    df = pd.read_csv(f"{PATENT_DIR}/gene_enumerated_patent_data.tsv", sep="\t")
-    # print(df['assignee'].unique())
+    df = pd.read_csv(
+        f"{PATENT_DIR}/gene_enumerated_patent_data.tsv",
+        sep="\t",
+        usecols=["patent_id", "assignee"],
+    )
 
     assignee_dict = {
         "COHEN FREDERICK": "Private",
@@ -271,4 +280,45 @@ def assignee_analysis():
     }
 
     df["assignee_type"] = df["assignee"].map(assignee_dict)
+
+    df.drop_duplicates(inplace=True)
+
     print(df["assignee_type"].value_counts())
+
+
+def gene_patent_analysis():
+    """Method for generating the gene-patent data plot."""
+    df = pd.read_csv(
+        f"{PATENT_DIR}/gene_enumerated_patent_data.tsv",
+        sep="\t",
+        usecols=["patent_id", "genes"],
+    )
+
+    df.drop_duplicates(inplace=True)
+
+    # Grouping patents by genes
+    df = df.groupby(by=["genes"]).count().reset_index()
+    df.sort_values(by="patent_id", inplace=True, ascending=False)
+
+    # grid lines
+    plt.figure(figsize=(12, 5))
+    sns.set_style("darkgrid")
+
+    bx = sns.barplot(x="genes", y="patent_id", data=df, color="c", dodge=False)
+    for item in bx.get_xticklabels():
+        item.set_rotation(45)
+
+    bx.set_xlabel("Gene symbol", fontsize=14, fontweight="bold")
+    bx.set_ylabel("Number of patents", fontsize=14, fontweight="bold")
+
+    # Set bar labels
+    for container in bx.containers:
+        bx.bar_label(container)
+
+    plt.tight_layout()
+    plt.savefig(f"{PLOT_DIR}/gene_patent_analysis.jpg")
+    plt.show()
+
+
+if __name__ == "__main__":
+    gene_patent_analysis()

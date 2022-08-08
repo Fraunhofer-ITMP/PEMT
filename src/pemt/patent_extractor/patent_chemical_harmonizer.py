@@ -16,6 +16,9 @@ from pemt.utils import get_chemical_names
 
 logger = logging.getLogger(__name__)
 
+os.makedirs(MAPPER_DIR, exist_ok=True)
+os.makedirs(PATENT_DIR, exist_ok=True)
+
 
 def get_surechembl_id(
     chemical_id: str, chemical_name: str, chemical_mapper: dict
@@ -73,7 +76,9 @@ def harmonize_chemicals(analysis_name: str, from_genes: bool = True) -> None:
         cache_dict = {}
 
     # Load chembl - schembl mapper
-    with open(f"{MAPPER_DIR}/chemical_mapper.json") as f:
+    with open(
+        "https://raw.githubusercontent.com/Fraunhofer-ITMP/PEMT/main/data/mapper/chemical_mapper.json"
+    ) as f:
         chemical_mapper = json.load(f)
 
     # Add caching system

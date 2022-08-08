@@ -10,6 +10,9 @@
     <a href="https://github.com/Fraunhofer-ITMP/PET/blob/master/LICENSE">
         <img src="https://img.shields.io/pypi/l/PEMT" alt="MIT">
     </a>
+
+ [![DOI:10.1101/2022.07.28.501730v1](http://img.shields.io/badge/DOI-10.1101/2022.07.28.501730v1-B31B1B.svg)](https://doi.org/10.1101/2021.01.08.425840)
+
 </h1>
 
 ## Table of Contents
@@ -123,21 +126,15 @@ $ pemt run-pemt --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --input-type=<DAT
 
 If you have difficulties using PEMT, please open an issue at our [GitHub](https://github.com/Fraunhofer-ITMP/PEMT) repository.
 
-[comment]: <> (### Citation)
+### Citation
 
-[comment]: <> (If you have found PET useful in your work, please consider citing:)
+If you have found PET useful in your work, please consider citing:
 
-[comment]: <> ([**CLEP: A Hybrid Data- and Knowledge- Driven Framework for Generating Patient Representations**]&#40;https://doi.org/10.1093/bioinformatics/btab340)
+[**PEMT: A patent enrichment tool for drug discovery**](https://www.biorxiv.org/content/10.1101/2022.07.28.501730v1).
 
-[comment]: <> (&#41;.<br />)
-
-[comment]: <> (Bharadhwaj, V. S., Ali, M., Birkenbihl, C., Mubeen, S., Lehmann, J., Hofmann-Apitius, M., Hoyt, C. T., & Domingo-Fernandez, D. &#40;2020&#41;.<br />)
-
-[comment]: <> (*Bioinformatics*, btab340. )
-
-[comment]: <> (### Graphics)
-
-[comment]: <> (The CLEP logo and framework graphic was designed by Carina Steinborn.)
+> PEMT: A patent enrichment tool for drug discovery
+Yojana Gadiya, Andrea Zaliani, Philip Gribbon, Martin Hofmann-Apitius
+*bioRxiv* 2022.07.28.501730; doi: https://doi.org/10.1101/2022.07.28.501730
 
 ## Disclaimer
 

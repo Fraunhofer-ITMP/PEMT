@@ -48,6 +48,7 @@ logger.setLevel(logging.INFO)
 """Constant factors related to scraping"""
 
 os.makedirs(f"{PATENT_DIR}", exist_ok=True)
+os.makedirs(f"{DATA_DIR}", exist_ok=True)
 
 
 def get_valid_patent_list(

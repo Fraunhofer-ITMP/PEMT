@@ -25,6 +25,8 @@ activity = new_client.activity
 
 tqdm.pandas()
 
+os.makedirs(MAPPER_DIR, exist_ok=True)
+
 
 def get_chemical_overview(file_path: str) -> None:
     """Method to report incomplete information in the chemical enrichment.
@@ -136,7 +138,7 @@ def extract_chemicals(
 
     # Load chembl target mapper files
     chembl_mapper = pd.read_csv(
-        f"{MAPPER_DIR}/chembl_uniprot_mapping.txt",
+        "https://raw.githubusercontent.com/Fraunhofer-ITMP/PEMT/main/data/mapper/chembl_uniprot_mapping.txt",
         dtype=str,
         skiprows=1,
         sep="\t",
@@ -147,7 +149,9 @@ def extract_chemicals(
     chembl_mapper = chembl_mapper.to_dict()["chembl_id"]
 
     hgnc_mapper = pd.read_csv(
-        f"{MAPPER_DIR}/hgnc_mapper.tsv", sep="\t", index_col="Approved symbol"
+        "https://raw.githubusercontent.com/Fraunhofer-ITMP/PEMT/main/data/mapper/hgnc_mapper.tsv",
+        sep="\t",
+        index_col="Approved symbol",
     ).to_dict()["UniProt ID(supplied by UniProt)"]
 
     # Loop to get and store the genes-chemical information from ChEMBL

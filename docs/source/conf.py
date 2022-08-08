@@ -21,7 +21,7 @@ project = "PEMT"
 copyright = "2022-2025, Yojana Gadiya and Andrea Zaliani"
 author = "Yojana Gadiya and Andrea Zaliani"
 
-release = "0.0.2"
+release = "0.0.3-dev"
 
 parsed_version = re.match(
     "(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)(?:-(?P<release>[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+(?P<build>[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?",

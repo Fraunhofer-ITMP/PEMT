@@ -126,11 +126,9 @@ $ pemt run-pemt --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --input-type=<DAT
 
 If you have difficulties using PEMT, please open an issue at our [GitHub](https://github.com/Fraunhofer-ITMP/PEMT) repository.
 
-### Citation
+## Citation
 
-If you have found PEMT useful in your work, please consider citing:
-
-[**PEMT: A patent enrichment tool for drug discovery**](https://www.biorxiv.org/content/10.1101/2022.07.28.501730v1).
+If you have found PEMT useful in your work, please consider citing: [**PEMT: A patent enrichment tool for drug discovery**](https://www.biorxiv.org/content/10.1101/2022.07.28.501730v1).
 
 > PEMT: A patent enrichment tool for drug discovery
 Yojana Gadiya, Andrea Zaliani, Philip Gribbon, Martin Hofmann-Apitius

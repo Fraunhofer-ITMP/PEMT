@@ -128,7 +128,7 @@ If you have difficulties using PEMT, please open an issue at our [GitHub](https:
 
 ### Citation
 
-If you have found PET useful in your work, please consider citing:
+If you have found PEMT useful in your work, please consider citing:
 
 [**PEMT: A patent enrichment tool for drug discovery**](https://www.biorxiv.org/content/10.1101/2022.07.28.501730v1).
 
@@ -138,4 +138,4 @@ Yojana Gadiya, Andrea Zaliani, Philip Gribbon, Martin Hofmann-Apitius
 
 ## Disclaimer
 
-PET is a scientific tool that has been developed in an academic capacity, and thus comes with no warranty or guarantee of maintenance, support, or back-up of data.
+PEMT is a scientific tool that has been developed in an academic capacity, and thus comes with no warranty or guarantee of maintenance, support, or back-up of data.

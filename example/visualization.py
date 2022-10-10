@@ -7,6 +7,7 @@ import os
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 
+import matplotlib as mpl
 import matplotlib.pylab as plt
 import pandas as pd
 import seaborn as sns
@@ -17,6 +18,10 @@ from pemt.constants import DATA_DIR, MAPPER_DIR, PATENT_DIR
 PLOT_DIR = f"{DATA_DIR}/plots"
 os.makedirs(PLOT_DIR, exist_ok=True)
 
+# Figure parameters
+mpl.rcParams["figure.dpi"] = 360
+sns.set_style("whitegrid")
+
 
 def gene_chemical_analysis():
     """Method analysing the gene-chemical data."""
@@ -24,7 +29,7 @@ def gene_chemical_analysis():
     print(f"Number of genes - {len(gene_dict)}")
 
     chemicals = [
-        chemical for _, chemcials in gene_dict.items() for chemical in chemcials
+        chemical for _, chemicals in gene_dict.items() for chemical in chemicals
     ]
     chemicals = set(chemicals)
     print(f"Number of chemicals - {len(chemicals)}")
@@ -53,7 +58,7 @@ def gene_chemical_analysis():
         bx.bar_label(container)
 
     plt.tight_layout()
-    plt.savefig(f"{PLOT_DIR}/gene_chemical_analysis.jpg")
+    plt.savefig(f"{PLOT_DIR}/gene_chemical_analysis.jpg", dpi=360, bbox_inches="tight")
     plt.show()
 
 
@@ -134,7 +139,7 @@ def patent_analysis():
         bx.bar_label(container)
 
     plt.tight_layout()
-    plt.savefig(f"{PLOT_DIR}/patent_year_analysis.jpg")
+    plt.savefig(f"{PLOT_DIR}/patent_year_analysis.jpg", dpi=360, bbox_inches="tight")
     plt.show()
 
 
@@ -316,9 +321,16 @@ def gene_patent_analysis():
         bx.bar_label(container)
 
     plt.tight_layout()
-    plt.savefig(f"{PLOT_DIR}/gene_patent_analysis.jpg")
+    plt.savefig(f"{PLOT_DIR}/gene_patent_analysis.jpg", dpi=360, bbox_inches="tight")
     plt.show()
 
 
 if __name__ == "__main__":
-    gene_patent_analysis()
+    # Supplementary figure 1
+    # gene_chemical_analysis()
+
+    # Supplementary figure 2
+    # gene_patent_analysis()
+
+    # Supplementary figure 3
+    patent_analysis()

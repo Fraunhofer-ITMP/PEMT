@@ -1,18 +1,26 @@
-cff-version: 1.0.1
-@article{10.1093/bioinformatics/btac716,
-    author = {Gadiya, Yojana and Zaliani, Andrea and Gribbon, Philip and Hofmann-Apitius, Martin},
-    title = "{PEMT: a patent enrichment tool for drug discovery}",
-    journal = {Bioinformatics},
-    year = {2022},
-    month = {11},
-    abstract = "{Drug discovery practitioners in industry and academia use semantic tools to extract information from online scientific literature to generate new insights into targets, therapeutics and diseases. However, due to complexities in access and analysis, patent-based literature is often overlooked as a source of information. As drug discovery is a highly competitive field, naturally, tools that tap into patent literature can provide any actor in the field an advantage in terms of better informed decision-making. Hence, we aim to facilitate access to patent literature through the creation of an automatic tool for extracting information from patents described in existing public resources.Here, we present PEMT, a novel patent enrichment tool, that takes advantage of public databases like ChEMBL and SureChEMBL to extract relevant patent information linked to chemical structures and/or gene names described through FAIR principles and metadata annotations. PEMT aims at supporting drug discovery and research by establishing a patent landscape around genes of interest. The pharmaceutical focus of the tool is mainly due to the subselection of International Patent Classification codes, but in principle, it can be used for other patent fields, provided that a link between a concept and chemical structure is investigated. Finally, we demonstrate a use-case in rare diseases by generating a gene-patent list based on the epidemiological prevalence of these diseases and exploring their underlying patent landscapes.PEMT is an open-source Python tool and its source code and PyPi package are available at https://github.com/Fraunhofer-ITMP/PEMT and https://pypi.org/project/PEMT/, respectively.Supplementary data are available at Bioinformatics online.}",
-    issn = {1367-4803},
-    doi = {10.1093/bioinformatics/btac716},
-    url = {https://doi.org/10.1093/bioinformatics/btac716},
-    note = {btac716},
-    eprint = {https://academic.oup.com/bioinformatics/advance-article-pdf/doi/10.1093/bioinformatics/btac716/46908441/btac716.pdf},
-    verison = {0.0.2},
-}
-
-
-
+cff-version: 1.0.0
+message: If you use the PEMT tool for your analysis, please cite it using this metadata.
+title: PEMT: A patent enrichment tool for drug discovery
+abstract: [Motivation] Drug discovery practitioners in industry and academia use semantic tools to extract information from online scientific literature to generate new insights into targets, therapeutics and diseases. However, due to complexities in access and analysis, patent-based literature is often overlooked as a source of information. As drug discovery is a highly competitive field, it is natural that tools tapping into patent literature can provide any actor in the field an advantage in terms of better-informed decision-making. Hence, we aim to facilitate access to patent literature by creating an automatic tool for extracting information from patents described in existing public resources.
+[Results] Here, we present PEMT, a novel patent enrichment tool, that takes advantage of public databases like ChEMBL and SureChEMBL to extract relevant patent information linked to chemical structures and/or gene names described through FAIR principles and metadata annotations. PEMT is aimed at supporting drug discovery and research in establishing a patent landscape around genes of interest. The pharmaceutical focus of the tool is mainly due to the subselection of IPC codes, but in principle, it can be used for other patent fields, provided that a link between a concept and chemical structure is investigated. Finally, we have demonstrated a use-case in rare diseases by generating a gene-patent list based on the epidemiological prevalence of these diseases and exploring their underlying patent landscape.
+authors:
+  - family-names: Gadiya
+    given-names: Yojana
+    orcid: https://orcid.org/0000-0002-7683-0452
+    affiliation: Fraunhofer Institute of Translation Medicine and Pharmacology
+  - family-names: Andrea
+    given-names: Zaliani
+    orcid: https://orcid.org/0000-0002-1740-8390
+    affiliation: Fraunhofer Institute of Translation Medicine and Pharmacology
+  - family-names: Gribbon
+    given-names: Philip
+    orcid: https://orcid.org/0000-0001-7655-2459
+    affiliation: Fraunhofer Institute of Translation Medicine and Pharmacology
+  - family-names: Hofmann-Apitius
+    given-names: Martin
+    orcid: https://orcid.org/0000-0001-9012-6720
+    affiliation: Fraunhofer-Institutszentrum Schloss Birlinghoven
+version: 0.0.2
+date-released: "2022-07-14"
+license: MIT License
+repository-code: "https://github.com/Fraunhofer-ITMP/PEMT"

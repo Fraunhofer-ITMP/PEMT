@@ -11,7 +11,7 @@
         <img src="https://img.shields.io/pypi/l/PEMT" alt="MIT">
     </a>
 
- [![DOI:10.1101/2022.07.28.501730v1](http://img.shields.io/badge/DOI-10.1101/2022.07.28.501730v1-B31B1B.svg)](https://doi.org/10.1101/2021.01.08.425840)
+ [![DOI:10.1093/bioinformatics/btac716](http://img.shields.io/badge/DOI-110.1093/bioinformatics/btac716-B31B1B.svg)](https://doi.org/10.1093/bioinformatics/btac716)
 
 </h1>
 
@@ -128,11 +128,9 @@ If you have difficulties using PEMT, please open an issue at our [GitHub](https:
 
 ## Citation
 
-If you have found PEMT useful in your work, please consider citing: [**PEMT: A patent enrichment tool for drug discovery**](https://www.biorxiv.org/content/10.1101/2022.07.28.501730v1).
+If you have found PEMT useful in your work, please consider citing: [**PEMT: A patent enrichment tool for drug discovery**](https://doi.org/10.1093/bioinformatics/btac716).
 
-> PEMT: A patent enrichment tool for drug discovery
-Yojana Gadiya, Andrea Zaliani, Philip Gribbon, Martin Hofmann-Apitius
-*bioRxiv* 2022.07.28.501730; doi: https://doi.org/10.1101/2022.07.28.501730
+> Yojana Gadiya, Andrea Zaliani, Philip Gribbon, Martin Hofmann-Apitius, PEMT: a patent enrichment tool for drug discovery, *Bioinformatics*, 2022;, btac716, [https://doi.org/10.1093/bioinformatics/btac716](https://doi.org/10.1093/bioinformatics/btac716)
 
 ## Disclaimer
 

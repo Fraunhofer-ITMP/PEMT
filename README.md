@@ -1,3 +1,8 @@
+<p align="center">
+  <img style="width: 200px; height: 200px;" src="docs/PEMT%20Logo.jpg">
+</p>
+
+
 <h1 align="center">
   PEMT: A tool for extracting patent literature in drug discovery
   <br/>

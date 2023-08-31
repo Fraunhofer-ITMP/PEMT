@@ -9,7 +9,7 @@ from pemt.chemical_extractor.experimental_data_extraction import extract_chemica
 from pemt.constants import MAPPER_DIR
 
 TEST_FOLDER = os.path.dirname(os.path.realpath(__file__))
-DUMMY_DATA = os.path.join(TEST_FOLDER, 'resources', 'dummy_gene.tsv')
+DUMMY_DATA = os.path.join(TEST_FOLDER, "resources", "dummy_gene.tsv")
 
 
 class TestInput(unittest.TestCase):
@@ -19,17 +19,14 @@ class TestInput(unittest.TestCase):
         """Test chemical extractor."""
 
         output = extract_chemicals(
-            analysis_name='test',
+            analysis_name="test",
             gene_file_path=DUMMY_DATA,
-            file_separator='comma',
-            is_uniprot=True
+            file_separator="comma",
+            is_uniprot=True,
         )
 
         """Test dummy protein are returned"""
-        self.assertEqual(
-            len(output),
-            11
-        )
+        self.assertEqual(len(output), 11)
 
         """Test dummy protein are outputted in a file"""
-        self.assertTrue(os.path.exists(f'{MAPPER_DIR}/test_gene_to_chemicals.json'))
+        self.assertTrue(os.path.exists(f"{MAPPER_DIR}/test_gene_to_chemicals.json"))

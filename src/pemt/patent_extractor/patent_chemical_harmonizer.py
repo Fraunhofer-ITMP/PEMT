@@ -76,9 +76,7 @@ def harmonize_chemicals(analysis_name: str, from_genes: bool = True) -> None:
         cache_dict = {}
 
     # Load chembl - schembl mapper
-    with open(
-        "https://raw.githubusercontent.com/Fraunhofer-ITMP/PEMT/main/data/mapper/chemical_mapper.json"
-    ) as f:
+    with open(f"{MAPPER_DIR}/chemical_mapper.json") as f:
         chemical_mapper = json.load(f)
 
     # Add caching system
@@ -156,7 +154,6 @@ def harmonize_chemicals(analysis_name: str, from_genes: bool = True) -> None:
                         ) as f:
                             json.dump(chemical_names, f, ensure_ascii=False, indent=2)
     else:
-
         for _, row in tqdm(
             chemical_df.iterrows(),
             total=chemical_df.shape[0],

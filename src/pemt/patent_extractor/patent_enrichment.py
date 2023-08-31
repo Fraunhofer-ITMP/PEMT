@@ -249,7 +249,6 @@ def extract_patent(
     cache_count = 0
 
     for chembl_id, surechembl_idx in tqdm(df.values, total=df.shape[0]):
-
         if pd.isna(surechembl_idx):
             continue
 

@@ -208,6 +208,11 @@ def extract_chemicals(
         )
         gene_chemical_dict[identifier] = chemical_list
 
+        if new_count == 50:
+            with open(f"{MAPPER_DIR}/{analysis_name}_gene_to_chemicals.json", "w") as f:
+                json.dump(gene_chemical_dict, f, ensure_ascii=False, indent=2)
+            new_count = 0
+
     # Save dict for re-use
     if new_count > 0:
         with open(f"{MAPPER_DIR}/{analysis_name}_gene_to_chemicals.json", "w") as f:

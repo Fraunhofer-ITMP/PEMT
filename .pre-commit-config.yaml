@@ -8,12 +8,6 @@ repos:
         exclude: '^data/'
       - id: debug-statements
       - id: check-yaml
-  - repo: https://github.com/pycqa/isort
-    rev: 5.5.4
-    hooks:
-      - id: isort
-        args: [ "--profile", "black" ]
-        exclude: '^data/'
   - repo: https://github.com/psf/black
     rev: 22.3.0
     hooks:

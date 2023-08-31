@@ -42,19 +42,19 @@ PEMT is a patent extractor tool that enables users to retrieve patents relevant 
 
 [comment]: <> (The code can be installed from [PyPI]&#40;https://pypi.org/project/clep/&#41; with:)
 
-```bash
-$ pip install PEMT
+```shell
+$ pip install pemt
 ```
 
 The most recent code can be installed from the source on [GitHub](https://github.com/Fraunhofer-ITMP/PEMT) with:
 
-```bash
+```shell
 $ pip install git+https://github.com/Fraunhofer-ITMP/PEMT.git
 ```
 
 Alternatively, for developer the tool can be installed in an editable mode as shown below:
 
-```bash
+```shell
 $ git clone https://github.com/Fraunhofer-ITMP/PEMT.git
 $ conda create --name pemt python=3.8
 $ conda activate pemt
@@ -64,7 +64,7 @@ $ pip install pemt
 
 For developers, the repository can be cloned from [GitHub](https://github.com/Fraunhofer-ITMP/PEMT) and installed in editable mode with:
 
-```bash
+```shell
 $ git clone https://github.com/Fraunhofer-ITMP/PEMT.git
 $ cd PEMT
 $ pip install -e .
@@ -106,7 +106,7 @@ As mentioned above, the tool has a two-step approach. Each of these steps can be
 1. **Chemical enrichment**
 The following command links chemicals to genes of interest based on causality. In this command it is necessary to indicate whether the file contains uniprot ids or not with the `--uniprot` or `--no-uniprot` parameter.
 
-```bash
+```shell
 $ pemt run-chemical-extractor --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --input-type=<DATA FILE SEPARATOR> --uniprot
 
 ```
@@ -114,7 +114,7 @@ $ pemt run-chemical-extractor --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --i
 2. **Patent enrichment**
 The following command interlinks chemicals to patent literature publicly available.
 
-```bash
+```shell
 $ pemt run-patent-extractor --name=<ANALYSIS NAME> --chromedriver-path=<PATH TO CHROMEDRIVER> --os=<OS NAME> --no-chemical
 ```
 
@@ -123,7 +123,7 @@ We also allow the flexibility to start the pipeline from this step, if the user 
 3. **PEMT workflow**
 The following command generates the patent enrichment on the gene data where the gene data file is a TSV file containing uniprot identifiers.
 
-```bash
+```shell
 $ pemt run-pemt --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --input-type=<DATA FILE SEPARATOR> --chromedriver-path=<PATH TO CHROMEDRIVER> --os=<OS NAME>
 ```
 

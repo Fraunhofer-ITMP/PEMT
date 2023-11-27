@@ -140,3 +140,7 @@ If you have found PEMT useful in your work, please consider citing: [**PEMT: A p
 ## Disclaimer
 
 PEMT is a scientific tool that has been developed in an academic capacity, and thus comes with no warranty or guarantee of maintenance, support, or back-up of data.
+
+
+## Funding
+This project has been funded by EOSC-Life which has received funding from the European Union's Horizon 2020 programme under grant agreement number 824087.

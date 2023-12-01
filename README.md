@@ -20,6 +20,8 @@
 
 </h1>
 
+# DISCLAIMER: Currently SureCHEMBL is going through a database restructuring and maintenance. The tool might not function in that case. The tool will be updated once the stable version of the database is ready!!
+
 ## Table of Contents
 
 * [General Info](#general-info)

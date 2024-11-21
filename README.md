@@ -20,7 +20,8 @@
 
 </h1>
 
-# DISCLAIMER: Currently SureCHEMBL is going through a database restructuring and maintenance. The tool might not function in that case. The tool will be updated once the stable version of the database is ready!!
+> [!WARNING]  
+> **Currently SureCHEMBL has undergone a major restructuring. The tool might not function in that case. The tool will be updated in December 2024!!**
 
 ## Table of Contents
 

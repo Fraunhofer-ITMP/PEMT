@@ -21,7 +21,7 @@
 </h1>
 
 > [!WARNING]  
-> **Currently SureCHEMBL has undergone a major restructuring. The tool might not function in that case. The tool will be updated in December 2024!!**
+> **Currently SureCHEMBL has undergone a major restructuring. The tool might not function in that case. The tool will be updated in soon!!**
 
 ## Table of Contents
 

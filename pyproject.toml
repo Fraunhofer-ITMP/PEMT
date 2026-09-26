@@ -1,0 +1,87 @@
+[project]
+name = "PEMT"
+version = "0.0.3-dev"
+description = "A tool for extractor patent literature in drug discovery"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Yojana Gadiya", email = "yojana.gadiya@itmp.fraunhofer.de" }]
+maintainers = [{ name = "Yojana Gadiya", email = "yojana.gadiya@itmp.fraunhofer.de" }]
+keywords = ["Drug Discovery", "Patent literature", "Bioinformatics"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "click>=7.1.2",
+    "pandas>=1.5",
+    "chembl_webresource_client==0.10.7",
+    "tqdm>=4.60.0",
+    "selenium==3.141.0",
+    "pubchempy>=1.0.4",
+]
+
+[project.optional-dependencies]
+docs = [
+    "sphinx",
+    "sphinx-rtd-theme",
+    "sphinx-click",
+    "sphinx-autodoc-typehints",
+]
+
+[project.urls]
+"Bug Tracker" = "https://github.com/Fraunhofer-ITMP/PEMT/issues"
+"Source Code" = "https://github.com/Fraunhofer-ITMP/PEMT"
+Documentation = "https://pemt.readthedocs.io/en/latest/"
+
+[project.scripts]
+pemt = "pemt.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "pytest-cov",
+    "pre-commit",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pemt"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src",
+    "tests",
+    "docs",
+    "README.md",
+    "LICENSE",
+    "CITATION.cff",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["live: tests that call the real ChEMBL/SureChEMBL APIs"]
+
+[tool.coverage.run]
+branch = true
+source = ["pemt"]
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = ["def __str__", "def __repr__"]

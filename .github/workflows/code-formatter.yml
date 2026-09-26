@@ -4,13 +4,9 @@ jobs:
   linting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.8
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
       - name: Linting
         run: |
-          pip install pre-commit || pre-commit install
-          pre-commit run --files src/*
-          pre-commit run --files docs/*
+          uvx pre-commit run --files src/*
+          uvx pre-commit run --files docs/*

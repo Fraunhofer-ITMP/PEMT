@@ -49,17 +49,18 @@ You may instead want to use the development version from Github, by running
 
    $ python3 -m pip install git+https://github.com/Fraunhofer-ITMP/PEMT.git
 
-For contributors, the repository can be cloned from `GitHub`_ and installed in editable mode using:
+For contributors, the repository can be cloned from `GitHub`_ and set up with `uv <https://docs.astral.sh/uv/>`_:
 
 .. code:: shell
 
    $ git clone https://github.com/Fraunhofer-ITMP/PEMT.git
    $ cd PEMT
-   $ python3 -m pip install -e .
+   $ uv sync
+   $ uv run pytest
 
 Dependency
 --------------
-- Python 3.8+
+- Python 3.10+
 - Installation of chromedriver
 
 Mandatory

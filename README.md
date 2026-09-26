@@ -55,22 +55,19 @@ The most recent code can be installed from the source on [GitHub](https://github
 $ pip install git+https://github.com/Fraunhofer-ITMP/PEMT.git
 ```
 
-Alternatively, for developer the tool can be installed in an editable mode as shown below:
+For developers, the project uses [uv](https://docs.astral.sh/uv/) to manage the environment. Clone the repository and create the environment (Python version from `.python-version`, dependencies from `uv.lock`) with:
 
 ```shell
 $ git clone https://github.com/Fraunhofer-ITMP/PEMT.git
-$ conda create --name pemt python=3.8
-$ conda activate pemt
 $ cd PEMT
-$ pip install pemt
+$ uv sync
 ```
 
-For developers, the repository can be cloned from [GitHub](https://github.com/Fraunhofer-ITMP/PEMT) and installed in editable mode with:
+Run the command line tool and the tests inside that environment with:
 
 ```shell
-$ git clone https://github.com/Fraunhofer-ITMP/PEMT.git
-$ cd PEMT
-$ pip install -e .
+$ uv run pemt --help
+$ uv run pytest
 ```
 
 ## Documentation

@@ -1044,7 +1044,7 @@ wheels = [
 
 [[package]]
 name = "pemt"
-version = "0.0.3.dev0"
+version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "chembl-webresource-client" },

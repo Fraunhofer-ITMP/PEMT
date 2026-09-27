@@ -99,7 +99,7 @@ For running PEMT from the chemical level, you need the input file with the follo
 
 ## Usage
 
-In-order to use PEMT, an installation of [**chromedriver**](https://chromedriver.chromium.org/) is **required**.
+Patents are retrieved from the [SureChEMBL bulk data](https://chembl.gitbook.io/surechembl/downloads/bulk-data), which is queried with [DuckDB](https://duckdb.org/). By default PEMT reads the latest release directly from the EBI server, so no download is needed; looking up the patents of a run takes roughly 15 minutes regardless of how many chemicals it has. Use `--surechembl-source` to pick a dated release (e.g. `2026-09-22`, for reproducible results) or a local folder with the downloaded Parquet files.
 
 As mentioned above, the tool has a two-step approach. Each of these steps can be run individually as well as together as show belwo:
 
@@ -115,8 +115,10 @@ $ pemt run-chemical-extractor --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --i
 The following command interlinks chemicals to patent literature publicly available.
 
 ```shell
-$ pemt run-patent-extractor --name=<ANALYSIS NAME> --chromedriver-path=<PATH TO CHROMEDRIVER> --os=<OS NAME> --no-chemical
+$ pemt run-patent-extractor --name=<ANALYSIS NAME> --no-chemical
 ```
+
+By default a chemical counts for a patent wherever it is mentioned. To only count patents that name the chemical in specific sections, add `--sections` (repeatable), e.g. `--sections claims`.
 
 We also allow the flexibility to start the pipeline from this step, if the user has list of chemicals in the right format as indicated above. The user then has to use the tag `--chemical` and provide a respective `--chemical-data` path.
 
@@ -124,7 +126,7 @@ We also allow the flexibility to start the pipeline from this step, if the user 
 The following command generates the patent enrichment on the gene data where the gene data file is a TSV file containing uniprot identifiers.
 
 ```shell
-$ pemt run-pemt --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --input-type=<DATA FILE SEPARATOR> --chromedriver-path=<PATH TO CHROMEDRIVER> --os=<OS NAME>
+$ pemt run-pemt --name=<ANALYSIS NAME> --data=<DATA FILE PATH> --input-type=<DATA FILE SEPARATOR>
 ```
 
 ## Issues

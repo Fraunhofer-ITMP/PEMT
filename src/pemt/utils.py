@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from typing import Dict, Optional
-from urllib.error import URLError
+from typing import Dict, Iterable, Optional
 
 import pandas as pd
-from pubchempy import get_compounds
 
 logger = logging.getLogger()
 logging.basicConfig(level=logging.INFO)
-pubchempy_logger = logging.getLogger("pubchempy")
-pubchempy_logger.setLevel(logging.WARNING)
 
 """Protein mapper functions"""
 
@@ -52,13 +48,39 @@ def uniprot_to_chembl(chemical_mapper: dict, uniprot_id: str) -> Optional[str]:
 """Chemical mapper functions"""
 
 
-def get_chemical_names(chembl_id: str) -> str:
-    """Method to get chemical name from ChEMBL id.
+def get_chembl_structures(chembl_ids: Iterable[str], chunk_size: int = 50) -> pd.DataFrame:
+    """Get the preferred name and standard InChIKey of ChEMBL compounds.
 
-    :param chembl_id: ChEMBL identifier of a compound
+    :param chembl_ids: ChEMBL compound identifiers (e.g. ``CHEMBL941``)
+    :param chunk_size: Number of compounds requested per ChEMBL web service call
+    :returns: Columns ``chembl``, ``name`` and ``inchi_key``. Compounds without a
+        structure (e.g. biologics) have no InChIKey; the name falls back to the id.
     """
-    try:
-        chemical_name = get_compounds(chembl_id, "name")[0].synonyms[0]
-    except (IndexError, URLError):
-        chemical_name = chembl_id
-    return chemical_name
+    from chembl_webresource_client.new_client import new_client
+
+    ids = sorted({i for i in chembl_ids if isinstance(i, str) and i})
+    rows = []
+    for start in range(0, len(ids), chunk_size):
+        chunk = ids[start : start + chunk_size]
+        found = new_client.molecule.filter(molecule_chembl_id__in=chunk).only(
+            ["molecule_chembl_id", "pref_name", "molecule_structures"]
+        )
+        for molecule in found:
+            structures = molecule.get("molecule_structures") or {}
+            rows.append(
+                {
+                    "chembl": molecule["molecule_chembl_id"],
+                    "name": molecule.get("pref_name") or molecule["molecule_chembl_id"],
+                    "inchi_key": structures.get("standard_inchi_key"),
+                }
+            )
+
+    df = pd.DataFrame(rows, columns=["chembl", "name", "inchi_key"])
+    missing = set(ids) - set(df["chembl"])
+    if missing:
+        logger.warning(f"{len(missing)} ChEMBL ids not found in ChEMBL, e.g. {sorted(missing)[:5]}")
+        df = pd.concat(
+            [df, pd.DataFrame({"chembl": sorted(missing), "name": sorted(missing), "inchi_key": None})],
+            ignore_index=True,
+        )
+    return df.sort_values("chembl", ignore_index=True)

@@ -31,8 +31,6 @@ dependencies = [
     "chembl_webresource_client==0.10.7",
     "duckdb>=1.1",
     "tqdm>=4.60.0",
-    "selenium==3.141.0",
-    "pubchempy>=1.0.4",
 ]
 
 [project.optional-dependencies]

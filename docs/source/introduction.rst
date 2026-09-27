@@ -61,15 +61,13 @@ For contributors, the repository can be cloned from `GitHub`_ and set up with `u
 Dependency
 --------------
 - Python 3.10+
-- Installation of chromedriver
 
 Mandatory
 ~~~~~~~~~
 
 - Pandas
 - CheMBL Webresource
-- PubChemPy
-- Chromedriver
+- DuckDB (to query the SureChEMBL bulk data)
 
 
 For API information to use this library, see the :ref:`dev-guide`.

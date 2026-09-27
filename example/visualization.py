@@ -105,7 +105,8 @@ def patent_analysis():
     ipc_codes = defaultdict(set)
     assignees = set()
 
-    for row in tqdm(chemical_patent_df.values):
+    columns = ["chembl", "surechembl", "patent_id", "date", "ipc", "assignee"]
+    for row in tqdm(chemical_patent_df[columns].values):
         (chemical_id, surechembl_id, patent_id, date, ipc, assignee) = row
 
         year = date.split("-")[0]

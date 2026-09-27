@@ -16,7 +16,7 @@ PEMT takes a two-step approach to collect patent documents relevant for drug dis
 
 1. The ``chemical_extractor`` module extraction of chemicals that directly regulate (i.e. activation or inhibition) genes of interest based on functional or biochemical assays found within ChEMBL.
 
-2. The ``patent_extractor`` module interlinking these chemicals to patent documents by systematically querying SureChEMBL, a patent database.
+2. The ``patent_extractor`` module interlinking these chemicals to patent documents in SureChEMBL, a patent database, using its bulk data release (queried with DuckDB).
 
 .. toctree::
    :maxdepth: 2

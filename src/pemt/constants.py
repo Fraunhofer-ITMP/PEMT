@@ -6,7 +6,24 @@ import os
 
 """File paths."""
 HERE = os.path.dirname(os.path.realpath(__file__))
-DATA_DIR = os.path.join(HERE, "../../data")
+
+
+def default_data_dir() -> str:
+    """Folder where PEMT keeps its results and caches.
+
+    1. ``PEMT_DATA_DIR`` if that environment variable is set;
+    2. the ``data`` folder of the repository when running from a source checkout;
+    3. otherwise ``pemt_data`` in the current working directory (installed package).
+    """
+    if os.environ.get("PEMT_DATA_DIR"):
+        return os.path.abspath(os.path.expanduser(os.environ["PEMT_DATA_DIR"]))
+    repo_root = os.path.normpath(os.path.join(HERE, "..", ".."))
+    if os.path.exists(os.path.join(repo_root, "pyproject.toml")):
+        return os.path.join(repo_root, "data")
+    return os.path.abspath("pemt_data")
+
+
+DATA_DIR = default_data_dir()
 PATENT_DIR = os.path.join(DATA_DIR, "patent_dumps")
 MAPPER_DIR = os.path.join(DATA_DIR, "mapper")
 

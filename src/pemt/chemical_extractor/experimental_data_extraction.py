@@ -10,7 +10,6 @@ from collections import defaultdict
 from typing import List
 
 import pandas as pd
-from chembl_webresource_client.new_client import new_client
 from tqdm import tqdm
 
 from pemt.constants import MAPPER_DIR
@@ -27,7 +26,21 @@ logger = logging.getLogger(__name__)
 chembl_logger = logging.getLogger("chembl_webresource_client")
 chembl_logger.setLevel(logging.WARNING)
 
-activity = new_client.activity
+# ChEMBL activity endpoint. The ChEMBL client contacts ChEMBL as soon as it is imported,
+# so it is loaded on first use: commands that do not query ChEMBL (and --help) keep
+# working when ChEMBL is unreachable.
+activity = None
+
+
+def _activity_endpoint():
+    """Return the ChEMBL activity endpoint, loading the ChEMBL client on first use."""
+    global activity
+    if activity is None:
+        from chembl_webresource_client.new_client import new_client
+
+        activity = new_client.activity
+    return activity
+
 
 tqdm.pandas()
 
@@ -99,11 +112,15 @@ def target_to_chemical(
 
     chemicals = {}
     for target_chembl in targets:
-        prot_activity_data = activity.filter(
-            target_chembl_id=target_chembl,
-            assay_type_iregex="(B|F)",
-            pchembl_value__gte=6,
-        ).only(["pchembl_value", "molecule_chembl_id"])
+        prot_activity_data = (
+            _activity_endpoint()
+            .filter(
+                target_chembl_id=target_chembl,
+                assay_type_iregex="(B|F)",
+                pchembl_value__gte=6,
+            )
+            .only(["pchembl_value", "molecule_chembl_id"])
+        )
 
         for i in prot_activity_data:
             pchembl_val = i["pchembl_value"]

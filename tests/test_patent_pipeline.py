@@ -205,6 +205,18 @@ def test_cli_run_patent_extractor(workdir, bulk_dir):
     assert not (workdir / "cleaned_cli_patent_data.tsv").exists()
 
 
+def test_cli_import_does_not_load_chembl_client():
+    """--help must work when ChEMBL is down: the ChEMBL client is only loaded on first query."""
+    import subprocess
+    import sys
+
+    code = (
+        "import sys, pemt.cli; "
+        "assert 'chembl_webresource_client.new_client' not in sys.modules, 'ChEMBL client loaded at import'"
+    )
+    subprocess.run([sys.executable, "-c", code], check=True)
+
+
 def test_cli_help_has_no_selenium_options():
     result = CliRunner().invoke(pemt.cli.main, ["run-pemt", "--help"])
     assert result.exit_code == 0

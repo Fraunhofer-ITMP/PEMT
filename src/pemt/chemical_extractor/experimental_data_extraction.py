@@ -13,7 +13,7 @@ from chembl_webresource_client.new_client import new_client
 from tqdm import tqdm
 
 from pemt.constants import MAPPER_DIR
-from pemt.utils import hgnc_to_chembl, uniprot_to_chembl
+from pemt.utils import get_single_protein_targets
 
 logger = logging.getLogger(__name__)
 
@@ -45,75 +45,55 @@ def get_chemical_overview(file_path: str) -> None:
     )
 
     df = pd.DataFrame(counter_dict, index=[0]).transpose()
-    value_count_dict = df[0].value_counts().to_dict()
-    logger.warning(
-        f"{value_count_dict[0]} genes found with no relevant chemical bioassay information."
-    )
+    without_chemicals = int((df[0] == 0).sum()) if not df.empty else 0
+    if without_chemicals:
+        logger.warning(
+            f"{without_chemicals} genes found with no relevant chemical bioassay information."
+        )
 
 
 def target_to_chemical(
-    chemical_mapping: dict,
     protein: str,
     protein_mapping: dict = None,
     is_uniprot: bool = False,
-) -> List[dict]:
+) -> List[str]:
     """Method to retrieve bioactive chemicals, from proteins, based on biochemical/ functional bioassays.
-    A chemical is considered active if it has a pChEMBL > 6.
+    A chemical is considered active if it has a pChEMBL >= 6.
 
-    :param chemical_mapping: A dictionary mapping the UNIPROT identifiers to ChEMBL identifiers
     :param protein: The protein name or identifier
     :param protein_mapping: A dictionary mapping the HGNC symbols to UNIPROT identifiers.
     By default, the value is set to None.
     :param is_uniprot: Boolean indicating whether the protein is an HGNC symbol or UNIPROT identifier.
     If using UniProt ids for protein, set the value to "True" and the protein_mapping parameter can be omitted.
     If using HGNC symbols, then the protein mapping dictionary needs to be provided.
+    :returns: ChEMBL ids of the active chemicals, without duplicates.
     """
-    chemicals = []
-
-    if not is_uniprot:
-        try:
-            assert protein_mapping is not None
-        except AssertionError:
-            raise ValueError(
-                f"HGNC symbol given without passing the HGNC to UNIPROT mapping file. \
-            Either pass the mapping file to hgnc_mapping variable or set the parameter is_uniprot=True"
-            )
-        target_chembl = hgnc_to_chembl(
-            uniprot_mapper=protein_mapping,
-            chemical_mapper=chemical_mapping,
-            hgnc_symbol=protein,
-        )
+    if is_uniprot:
+        uniprot_id = protein
     else:
-        target_chembl = uniprot_to_chembl(
-            chemical_mapper=chemical_mapping, uniprot_id=protein
-        )
+        if protein_mapping is None:
+            raise ValueError(
+                "HGNC symbol given without passing the HGNC to UNIPROT mapping file. "
+                "Either pass the mapping file to protein_mapping or set the parameter is_uniprot=True"
+            )
+        uniprot_id = protein_mapping.get(protein)
 
-    if not target_chembl:
-        return chemicals
+    chemicals = {}
+    for target_chembl in get_single_protein_targets(uniprot_id):
+        prot_activity_data = activity.filter(
+            target_chembl_id=target_chembl,
+            assay_type_iregex="(B|F)",
+            pchembl_value__gte=6,
+        ).only(["pchembl_value", "molecule_chembl_id"])
 
-    prot_activity_data = activity.filter(
-        target_chembl_id=target_chembl,
-        assay_type_iregex="(B|F)",
-    ).only(["pchembl_value", "molecule_chembl_id"])
+        for i in prot_activity_data:
+            pchembl_val = i["pchembl_value"]
+            if pchembl_val is None or pd.isna(pchembl_val) or float(pchembl_val) < 6:
+                continue
+            chemicals[i["molecule_chembl_id"]] = None  # dict keeps first-seen order
 
-    if len(prot_activity_data) < 1:
-        return chemicals
-
-    logger.debug(f"Analysing {len(prot_activity_data)} chemicals")
-    for i in prot_activity_data:
-        pchembl_val = i["pchembl_value"]
-
-        if pd.isna(pchembl_val):
-            continue
-
-        if float(pchembl_val) < 6:
-            continue
-
-        chemicals.append(
-            i["molecule_chembl_id"],
-        )
-
-    return chemicals
+    logger.debug(f"{protein}: {len(chemicals)} active chemicals")
+    return list(chemicals)
 
 
 def extract_chemicals(
@@ -135,18 +115,6 @@ def extract_chemicals(
     symbols. By default, the value is set to False indicating that a "symbol" column is present with the respective
     HGNC symbols. If set to True, the file with "uniprot" column is expected.
     """
-
-    # Load chembl target mapper files
-    chembl_mapper = pd.read_csv(
-        "https://raw.githubusercontent.com/Fraunhofer-ITMP/PEMT/main/data/mapper/chembl_uniprot_mapping.txt",
-        dtype=str,
-        skiprows=1,
-        sep="\t",
-        names=["uniprot", "chembl_id", "name", "type"],
-    )
-    chembl_mapper = chembl_mapper[["uniprot", "chembl_id"]]
-    chembl_mapper.set_index("uniprot", inplace=True)
-    chembl_mapper = chembl_mapper.to_dict()["chembl_id"]
 
     hgnc_mapper = pd.read_csv(
         "https://raw.githubusercontent.com/Fraunhofer-ITMP/PEMT/main/data/mapper/hgnc_mapper.tsv",
@@ -203,7 +171,6 @@ def extract_chemicals(
         chemical_list = target_to_chemical(
             protein=identifier,
             protein_mapping=hgnc_mapper,
-            chemical_mapping=chembl_mapper,
             is_uniprot=is_uniprot,
         )
         gene_chemical_dict[identifier] = chemical_list

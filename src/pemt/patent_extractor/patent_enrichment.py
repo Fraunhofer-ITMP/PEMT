@@ -10,7 +10,7 @@ from typing import Iterable, Optional
 import pandas as pd
 
 from pemt.constants import PATENT_DIR, VALID_CODES
-from pemt.surechembl import SureChEMBLBulk, resolve_source
+from pemt.surechembl import SECTIONS, SureChEMBLBulk, resolve_source
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +27,42 @@ PATENT_COLUMNS = [
     "family_id",
     "sections",
 ]
+
+
+def _join_unique(values, order=None) -> str:
+    """Join the distinct ``"; "``-separated items of ``values``, optionally in a given order."""
+    items = {item for value in values if value for item in str(value).split("; ")}
+    key = (lambda x: order.get(x, len(order))) if order else None
+    return "; ".join(sorted(items, key=key))
+
+
+def merge_duplicate_records(patents: pd.DataFrame) -> pd.DataFrame:
+    """Keep one row per chemical and patent.
+
+    SureChEMBL sometimes holds several compound records with the same InChIKey, so one
+    ChEMBL chemical can reach the same patent through more than one SureChEMBL id. Such
+    rows are merged: ``surechembl`` and ``sections`` list all values, the patent columns
+    are identical anyway. Only the (few) duplicated rows are grouped, to stay fast.
+    """
+    key = ["chembl", "patent_id"]
+    duplicated = patents.duplicated(key, keep=False)
+    if not duplicated.any():
+        return patents
+
+    merged = (
+        patents[duplicated]
+        .groupby(key, sort=False)
+        .agg(
+            surechembl=("surechembl", _join_unique),
+            date=("date", "first"),
+            ipc=("ipc", "first"),
+            assignee=("assignee", "first"),
+            family_id=("family_id", "first"),
+            sections=("sections", lambda v: _join_unique(v, SECTIONS)),
+        )
+        .reset_index()
+    )
+    return pd.concat([patents[~duplicated], merged[PATENT_COLUMNS]], ignore_index=True)
 
 
 def extract_patent(
@@ -55,8 +91,13 @@ def extract_patent(
     :param bulk: An open :class:`pemt.surechembl.SureChEMBLBulk` to reuse instead of ``source``.
     :returns: One row per chemical and patent with the columns in :data:`PATENT_COLUMNS`.
     """
+    chemical_file = f"{PATENT_DIR}/{analysis_name}_chemicals.tsv"
+    if not os.path.exists(chemical_file):
+        logger.warning(f"{chemical_file} not found; run the chemical harmonizer first")
+        return pd.DataFrame(columns=PATENT_COLUMNS)
+
     chemicals = pd.read_csv(
-        f"{PATENT_DIR}/{analysis_name}_chemicals.tsv",
+        chemical_file,
         sep="\t",
         dtype=str,
         usecols=["chembl", "schembl_id"],
@@ -82,6 +123,11 @@ def extract_patent(
         if state.get("settings") == settings:
             patents = pd.read_csv(patent_file, sep="\t", dtype=str).reindex(columns=PATENT_COLUMNS)
             done = set(state.get("compounds_done", []))
+            # Files from before duplicate records were merged are fixed up in place.
+            merged = merge_duplicate_records(patents)
+            if len(merged) != len(patents):
+                patents = merged.sort_values(["chembl", "date", "patent_id"], ignore_index=True)
+                patents.to_csv(patent_file, sep="\t", index=False)
         else:
             logger.info("Patent settings changed since the last run; querying all compounds again")
 
@@ -108,12 +154,13 @@ def extract_patent(
         new = new[PATENT_COLUMNS].fillna("").astype(str)
 
         patents = pd.concat([patents, new], ignore_index=True) if not patents.empty else new
-        patents = patents.drop_duplicates().sort_values(["chembl", "date", "patent_id"], ignore_index=True)
+        patents = merge_duplicate_records(patents.drop_duplicates())
+        patents = patents.sort_values(["chembl", "date", "patent_id"], ignore_index=True)
         patents.to_csv(patent_file, sep="\t", index=False)
         with open(state_file, "w") as f:
             json.dump({"settings": settings, "compounds_done": sorted(done | set(todo))}, f, indent=2)
 
-    current = patents[patents["surechembl"].isin(set(chemicals["schembl_id"]))]
+    current = patents[patents["chembl"].isin(set(chemicals["chembl"]))]
     logger.info(
         f"{current['patent_id'].nunique()} patents for {current['chembl'].nunique()} of "
         f"{chemicals['chembl'].nunique()} chemicals"

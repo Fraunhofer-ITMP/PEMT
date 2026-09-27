@@ -208,9 +208,10 @@ def run_pemt(
 
 
 def _save_patent_outputs(name: str, patent_df: pd.DataFrame, with_genes: bool) -> None:
-    """Write the cleaned patent table and, for gene based runs, the gene annotated one."""
-    patent_df.to_csv(f"{PATENT_DIR}/cleaned_{name}_patent_data.tsv", sep="\t", index=False)
+    """For gene based runs, add the genes to the patent table and save it.
 
+    The patent table itself (``<name>_patent_data.tsv``) is written by ``extract_patent``.
+    """
     if with_genes:
         with open(f"{MAPPER_DIR}/{name}_gene_to_chemicals.json") as f:
             gene_chemical_data = json.load(f)

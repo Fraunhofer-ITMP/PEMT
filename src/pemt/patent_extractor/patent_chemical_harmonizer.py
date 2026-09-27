@@ -67,8 +67,10 @@ def harmonize_chemicals(
 
     # Reuse earlier results; a user-provided input file has no inchi_key column yet.
     cached = pd.DataFrame(columns=CHEMICAL_COLUMNS)
+    previous_columns = []
     if os.path.exists(chemical_file):
         previous = pd.read_csv(chemical_file, sep="\t", dtype=str)
+        previous_columns = list(previous.columns)
         if "inchi_key" in previous.columns:
             cached = previous.reindex(columns=CHEMICAL_COLUMNS)
 
@@ -97,8 +99,10 @@ def harmonize_chemicals(
             f"new chemicals to SureChEMBL"
         )
         cached = pd.concat([cached, new], ignore_index=True) if not cached.empty else new
-        cached.sort_values(["chembl", "schembl_id"], ignore_index=True).to_csv(
-            chemical_file, sep="\t", index=False
-        )
+        cached = cached.sort_values(["chembl", "schembl_id"], ignore_index=True)
+
+    # Always write the file (even when empty) so the patent step finds it.
+    if todo or not os.path.exists(chemical_file) or "inchi_key" not in previous_columns:
+        cached.to_csv(chemical_file, sep="\t", index=False)
 
     return cached[cached["chembl"].isin(chembl_ids)].reset_index(drop=True)

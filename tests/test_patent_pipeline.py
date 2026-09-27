@@ -70,6 +70,19 @@ def test_harmonize_from_genes(workdir, bulk_dir, chembl_calls):
     assert len(chembl_calls) == 1
 
 
+def test_run_without_any_chemicals(workdir, bulk_dir, chembl_calls):
+    """Genes without ChEMBL chemicals: no lookups, an empty chemicals file, no patents."""
+    (workdir / "empty_gene_to_chemicals.json").write_text(json.dumps({"GENE1": [], "GENE2": []}))
+    assert harmonizer.harmonize_chemicals("empty", source=str(bulk_dir)).empty
+    assert chembl_calls == []
+    assert (workdir / "empty_chemicals.tsv").exists()
+    assert enrichment.extract_patent("empty", source=str(bulk_dir)).empty
+
+
+def test_extract_patent_without_chemical_file(workdir):
+    assert list(enrichment.extract_patent("never_harmonized").columns) == PATENT_COLUMNS
+
+
 def test_harmonize_requires_gene_file(workdir, bulk_dir):
     with pytest.raises(FileNotFoundError, match="experimental data extractor"):
         harmonizer.harmonize_chemicals("missing", source=str(bulk_dir))
@@ -136,6 +149,19 @@ def test_extract_patent_uses_cache(workdir, bulk_dir):
     ]
 
 
+def test_one_chemical_with_two_surechembl_records(workdir, bulk_dir):
+    """A ChEMBL chemical matching two SureChEMBL records gets one row per patent."""
+    pd.DataFrame(
+        {"chembl": ["CHEMBL941", "CHEMBL941"], "schembl_id": ["SCHEMBL3827", "SCHEMBL9"]}
+    ).to_csv(workdir / "dup_chemicals.tsv", sep="\t", index=False)
+
+    df = enrichment.extract_patent("dup", source=str(bulk_dir))
+    assert df["patent_id"].tolist() == ["WO-2011041462-A2", "EP-2389136-A1"]
+    ep = df.set_index("patent_id").loc["EP-2389136-A1"]
+    assert ep["surechembl"] == "SCHEMBL3827; SCHEMBL9"
+    assert ep["sections"] == "description; claims"  # 3827 in description, 9 in claims
+
+
 def test_extract_patent_no_mapped_chemicals(workdir):
     pd.DataFrame({"chembl": ["CHEMBL_X"], "schembl_id": [None]}).to_csv(
         workdir / "none_chemicals.tsv", sep="\t", index=False
@@ -159,8 +185,9 @@ def test_cli_run_patent_extractor(workdir, bulk_dir):
         ],
     )
     assert result.exit_code == 0, result.output
-    out = pd.read_csv(workdir / "cleaned_cli_patent_data.tsv", sep="\t", dtype=str)
+    out = pd.read_csv(workdir / "cli_patent_data.tsv", sep="\t", dtype=str)
     assert out["patent_id"].tolist() == ["WO-2011041462-A2"]
+    assert not (workdir / "cleaned_cli_patent_data.tsv").exists()
 
 
 def test_cli_help_has_no_selenium_options():

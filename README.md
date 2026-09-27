@@ -120,6 +120,8 @@ $ pemt run-patent-extractor --name=<ANALYSIS NAME> --no-chemical
 
 By default a chemical counts for a patent wherever it is mentioned. To only count patents that name the chemical in specific sections, add `--sections` (repeatable), e.g. `--sections claims`.
 
+> **Tip:** most mentions of a chemical are in a patent's description only (about 88% in a test run on ABL1, KIT and FLT3). For well-known drugs and common compounds (e.g. imatinib, or oleic acid, which is active on FLT3 in ChEMBL and appears in over 400,000 patents) this is dominated by passing mentions such as combination therapies or formulations. Use `--sections claims` for a patent landscape of chemicals that are actually claimed.
+
 We also allow the flexibility to start the pipeline from this step, if the user has list of chemicals in the right format as indicated above. The user then has to use the tag `--chemical` and provide a respective `--chemical-data` path.
 
 3. **PEMT workflow**

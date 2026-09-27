@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from typing import Dict, Iterable, Optional
+from typing import Dict, Iterable, List, Optional
 
 import pandas as pd
 
@@ -22,27 +22,24 @@ def get_hgnc_id() -> Dict[str, str]:
     return protein_mapping
 
 
-def hgnc_to_chembl(
-    chemical_mapper: Dict[str, str], uniprot_mapper: Dict[str, str], hgnc_symbol: str
-) -> Optional[str]:
-    """Mapping HGNC symbol to ChEMBL identifiers.
+def get_single_protein_targets(uniprot_id: Optional[str]) -> List[str]:
+    """Find the ChEMBL SINGLE PROTEIN target(s) for a UniProt accession.
 
-    :param chemical_mapper: A dictionary mapping the UNIPROT identifiers to ChEMBL
-    :param uniprot_mapper: A dictionary mapping the HGNC identifiers to UNIPROT
-    :param hgnc_symbol: A HGNC symbol
+    Many proteins also appear in ChEMBL as part of complexes, fusion proteins, protein
+    families or degrader (protein-protein interaction) targets; only the target that is
+    the protein itself is returned, normally exactly one.
+
+    :param uniprot_id: UniProt accession, e.g. ``P00519`` for ABL1
+    :returns: ChEMBL target ids (empty if the protein is not a ChEMBL target)
     """
-    uniprot_id = uniprot_mapper.get(hgnc_symbol)
-    return uniprot_to_chembl(chemical_mapper=chemical_mapper, uniprot_id=uniprot_id)
+    if not isinstance(uniprot_id, str) or not uniprot_id:
+        return []
+    from chembl_webresource_client.new_client import new_client
 
-
-def uniprot_to_chembl(chemical_mapper: dict, uniprot_id: str) -> Optional[str]:
-    """Mapping UniProt identifiers to ChEMBL identifiers.
-
-    :param chemical_mapper: A dictionary mapping the UNIPROT identifiers to ChEMBL
-    :param uniprot_id: UNIPROT identifier of a protein
-    """
-    target_chembl = chemical_mapper.get(uniprot_id)
-    return target_chembl
+    targets = new_client.target.filter(
+        target_components__accession=uniprot_id, target_type="SINGLE PROTEIN"
+    ).only(["target_chembl_id"])
+    return sorted({t["target_chembl_id"] for t in targets})
 
 
 """Chemical mapper functions"""

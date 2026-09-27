@@ -28,7 +28,8 @@ requires-python = ">=3.10"
 dependencies = [
     "click>=7.1.2",
     "pandas>=1.5",
-    "chembl_webresource_client==0.10.7",
+    "chembl_webresource_client>=0.10.9",
+    "requests>=2.28",
     "duckdb>=1.1",
     "tqdm>=4.60.0",
 ]

@@ -2,6 +2,7 @@
 
 """Script for extracting experimental bioassay information from ChEMBL."""
 
+import datetime
 import json
 import logging
 import os
@@ -13,7 +14,7 @@ from chembl_webresource_client.new_client import new_client
 from tqdm import tqdm
 
 from pemt.constants import MAPPER_DIR
-from pemt.utils import get_single_protein_targets
+from pemt.utils import get_chembl_release, get_single_protein_targets, load_hgnc, symbols_to_uniprot
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +62,8 @@ def target_to_chemical(
     A chemical is considered active if it has a pChEMBL >= 6.
 
     :param protein: The protein name or identifier
-    :param protein_mapping: A dictionary mapping the HGNC symbols to UNIPROT identifiers.
+    :param protein_mapping: A dictionary mapping the HGNC symbols to UNIPROT identifiers (a list, or a
+    string with several ids separated by "," or "|"), e.g. from :func:`pemt.utils.symbols_to_uniprot`.
     By default, the value is set to None.
     :param is_uniprot: Boolean indicating whether the protein is an HGNC symbol or UNIPROT identifier.
     If using UniProt ids for protein, set the value to "True" and the protein_mapping parameter can be omitted.
@@ -69,17 +71,21 @@ def target_to_chemical(
     :returns: ChEMBL ids of the active chemicals, without duplicates.
     """
     if is_uniprot:
-        uniprot_id = protein
+        uniprot_ids = [protein]
     else:
         if protein_mapping is None:
             raise ValueError(
                 "HGNC symbol given without passing the HGNC to UNIPROT mapping file. "
                 "Either pass the mapping file to protein_mapping or set the parameter is_uniprot=True"
             )
-        uniprot_id = protein_mapping.get(protein)
+        uniprot_ids = protein_mapping.get(protein) or []
+        if isinstance(uniprot_ids, str):  # e.g. "O43687, Q9P0M2" or "O43687|Q9P0M2"
+            uniprot_ids = [u.strip() for u in uniprot_ids.replace("|", ",").split(",") if u.strip()]
+
+    targets = sorted({t for uniprot_id in uniprot_ids for t in get_single_protein_targets(uniprot_id)})
 
     chemicals = {}
-    for target_chembl in get_single_protein_targets(uniprot_id):
+    for target_chembl in targets:
         prot_activity_data = activity.filter(
             target_chembl_id=target_chembl,
             assay_type_iregex="(B|F)",
@@ -102,7 +108,6 @@ def extract_chemicals(
     gene_file_path: str = None,
     file_separator: str = "comma",
     is_uniprot: bool = False,
-    chembl_version: str = "30",
 ):
     """Enrich genes with chemical data from CheMBL bioassays.
 
@@ -115,12 +120,6 @@ def extract_chemicals(
     symbols. By default, the value is set to False indicating that a "symbol" column is present with the respective
     HGNC symbols. If set to True, the file with "uniprot" column is expected.
     """
-
-    hgnc_mapper = pd.read_csv(
-        "https://raw.githubusercontent.com/Fraunhofer-ITMP/PEMT/main/data/mapper/hgnc_mapper.tsv",
-        sep="\t",
-        index_col="Approved symbol",
-    ).to_dict()["UniProt ID(supplied by UniProt)"]
 
     # Loop to get and store the genes-chemical information from ChEMBL
     if os.path.exists(f"{MAPPER_DIR}/{analysis_name}_gene_to_chemicals.json"):
@@ -161,6 +160,31 @@ def extract_chemicals(
     else:
         proteins = gene_list
 
+    proteins = sorted({str(p).strip() for p in proteins if isinstance(p, str) and str(p).strip()})
+
+    # Record which releases this run used (ChEMBL changes a few times a year).
+    info_file = f"{MAPPER_DIR}/{analysis_name}_run_info.json"
+    run_info = json.load(open(info_file)) if os.path.exists(info_file) else {}
+    chembl_release = get_chembl_release()
+    if run_info.get("chembl_release") and chembl_release and run_info["chembl_release"] != chembl_release:
+        logger.warning(
+            f"Cached results of '{analysis_name}' come from {run_info['chembl_release']}, ChEMBL now serves "
+            f"{chembl_release}; delete {analysis_name}_gene_to_chemicals.json to redo them"
+        )
+    run_info.setdefault("chembl_release", chembl_release)
+    run_info["input_type"] = "uniprot" if is_uniprot else "symbol"
+
+    # Gene symbols -> UniProt accessions via the current HGNC complete set
+    hgnc_mapper = None
+    if not is_uniprot:
+        todo = [p for p in proteins if p not in gene_chemical_dict]
+        if todo:
+            hgnc = load_hgnc(MAPPER_DIR)
+            hgnc_mapper = symbols_to_uniprot(todo, hgnc)
+            hgnc_file = os.path.join(MAPPER_DIR, "hgnc_complete_set.txt")
+            run_info["hgnc_file_date"] = datetime.date.fromtimestamp(os.path.getmtime(hgnc_file)).isoformat()
+            run_info["symbol_to_uniprot"] = {**run_info.get("symbol_to_uniprot", {}), **hgnc_mapper}
+
     # Loop to get chemicals related to target
     for identifier in tqdm(proteins, desc="Extracting chemicals for targets"):
         if identifier in gene_chemical_dict:
@@ -181,9 +205,12 @@ def extract_chemicals(
             new_count = 0
 
     # Save dict for re-use
-    if new_count > 0:
+    if new_count > 0 or not os.path.exists(f"{MAPPER_DIR}/{analysis_name}_gene_to_chemicals.json"):
         with open(f"{MAPPER_DIR}/{analysis_name}_gene_to_chemicals.json", "w") as f:
             json.dump(gene_chemical_dict, f, ensure_ascii=False, indent=2)
+
+    with open(info_file, "w") as f:
+        json.dump(run_info, f, ensure_ascii=False, indent=2)
 
     # Get genes with no chemical hits
     get_chemical_overview(f"{MAPPER_DIR}/{analysis_name}_gene_to_chemicals.json")

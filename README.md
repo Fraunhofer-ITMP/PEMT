@@ -96,6 +96,14 @@ For running PEMT from the chemical level, you need the input file with the follo
 
 **Note:** The data must be in a comma or tab separated file format. If not so, the file should have at least one of the columns shown above.
 
+**How genes are mapped to ChEMBL:**
+
+- **Gene symbols** (`--no-uniprot`) are resolved with the [HGNC complete set](https://www.genenames.org/download/statistics-and-files/), which PEMT downloads and refreshes every 30 days (`data/mapper/hgnc_complete_set.txt`). A symbol is matched as an approved symbol first, then as a previous symbol (e.g. `MLL` → `KMT2A`), then as an alias; ambiguous aliases are skipped. Genes with several protein products use all of their UniProt accessions.
+- **UniProt accessions** are used as given.
+- Each accession is looked up in the current ChEMBL release and only its *single protein* target is used, not complexes, fusion proteins or degrader targets that contain the protein.
+
+The ChEMBL release, the HGNC file date and the symbol → UniProt mapping of each run are saved in `data/mapper/<ANALYSIS NAME>_run_info.json`.
+
 
 ## Usage
 

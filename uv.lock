@@ -25,11 +25,11 @@ wheels = [
 
 [[package]]
 name = "attrs"
-version = "21.4.0"
+version = "26.1.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/d7/77/ebb15fc26d0f815839ecd897b919ed6d85c050feeb83e100e020df9153d2/attrs-21.4.0.tar.gz", hash = "sha256:626ba8234211db98e869df76230a137c4c40a12d72445c45d5f5b716f076e2fd", size = 201839, upload-time = "2021-12-29T13:15:09.056Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/9a/8e/82a0fe20a541c03148528be8cac2408564a6c9a0cc7e9171802bc1d26985/attrs-26.1.0.tar.gz", hash = "sha256:d03ceb89cb322a8fd706d4fb91940737b6642aa36998fe130a9bc96c985eff32", size = 952055, upload-time = "2026-03-19T14:22:25.026Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/be/be/7abce643bfdf8ca01c48afa2ddf8308c2308b0c3b239a44e57d020afa0ef/attrs-21.4.0-py2.py3-none-any.whl", hash = "sha256:2d27e3784d7a565d36ab851fe94887c5eccd6a463168875832a1be79c82828b4", size = 60567, upload-time = "2021-12-29T13:15:06.703Z" },
+    { url = "https://files.pythonhosted.org/packages/64/b4/17d4b0b2a2dc85a6df63d1157e028ed19f90d4cd97c36717afef2bc2f395/attrs-26.1.0-py3-none-any.whl", hash = "sha256:c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309", size = 67548, upload-time = "2026-03-19T14:22:23.645Z" },
 ]
 
 [[package]]
@@ -39,6 +39,20 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/7d/b2/51899539b6ceeeb420d40ed3cd4b7a40519404f9baf3d4ac99dc413a834b/babel-2.18.0.tar.gz", hash = "sha256:b80b99a14bd085fcacfa15c9165f651fbb3406e66cc603abf11c5750937c992d", size = 9959554, upload-time = "2026-02-01T12:30:56.078Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/77/f5/21d2de20e8b8b0408f0681956ca2c69f1320a3848ac50e6e7f39c6159675/babel-2.18.0-py3-none-any.whl", hash = "sha256:e2b422b277c2b9a9630c1d7903c2a00d0830c409c59ac8cae9081c92f1aeba35", size = 10196845, upload-time = "2026-02-01T12:30:53.445Z" },
+]
+
+[[package]]
+name = "cattrs"
+version = "26.2.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "attrs" },
+    { name = "exceptiongroup", marker = "python_full_version < '3.11'" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/23/75/e72b839c3dc869c990b4842f3dba730bdcdf5215f68fc7955edf849a1792/cattrs-26.2.1.tar.gz", hash = "sha256:679132bfdc225c5ee40c024fc42519954767c387f950dc6751946c586bccdc6d", size = 525617, upload-time = "2026-09-26T20:53:21.114Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e8/cf/22794a399d99480486120e26e879ef008e21f5e85274c2ed591d568bb326/cattrs-26.2.1-py3-none-any.whl", hash = "sha256:a12aaa3453dc8f633a815293179f08b7421ed18d2575c459c3c736f840beac24", size = 74843, upload-time = "2026-09-26T20:53:19.767Z" },
 ]
 
 [[package]]
@@ -224,7 +238,7 @@ wheels = [
 
 [[package]]
 name = "chembl-webresource-client"
-version = "0.10.7"
+version = "0.10.9"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "easydict" },
@@ -232,9 +246,9 @@ dependencies = [
     { name = "requests-cache" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b0/32/48dcd0a9e8a5f75472cbb08fd3c785ea3e1e70e6899711d32de905d1de99/chembl-webresource-client-0.10.7.tar.gz", hash = "sha256:21f638dd4c98944ee91abd969bbbcdfc1e9d0a5c642799a2d5df9ef521c0e6b7", size = 52579, upload-time = "2021-07-09T07:58:47.814Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/71/f0/a392e80361645d0dea1a228ff131b43a69209715b0b583832d9bd2bdd4ac/chembl-webresource-client-0.10.9.tar.gz", hash = "sha256:d49c7db7d40d19289f0f950557d0cf133fddef56c78a5873ed922a3d5816cc20", size = 46390, upload-time = "2024-02-26T15:55:41.137Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1f/dc/d80cce4e997a89e7a857e57b62f57665c0330e81c2e441ac511f00cba5b9/chembl_webresource_client-0.10.7-py3-none-any.whl", hash = "sha256:189165a92981c4ebf3d8571f776812fab5ca884dc96ed8b301beaf0b20723b92", size = 55629, upload-time = "2021-07-09T07:58:45.976Z" },
+    { url = "https://files.pythonhosted.org/packages/c2/7a/81dd5eb6d6166f733c02aeff6eff207ee3cd077872e6a20da925044c3d59/chembl_webresource_client-0.10.9-py3-none-any.whl", hash = "sha256:99101cad1ad178c5a0d7d74d70923c7997e9e63ec0361c247c6252dc29e524b5", size = 55201, upload-time = "2024-02-26T15:55:39.426Z" },
 ]
 
 [[package]]
@@ -535,15 +549,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/72/34/14ca021ce8e5dfedc35312d08ba8bf51fdd999c576889fc2c24cb97f4f10/iniconfig-2.3.0.tar.gz", hash = "sha256:c76315c77db068650d49c5b56314774a7804df16fee4402c1f19d6d15d8c4730", size = 20503, upload-time = "2025-10-18T21:55:43.219Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/cb/b1/3846dd7f199d53cb17f49cba7e651e9ce294d8497c8c150530ed11865bb8/iniconfig-2.3.0-py3-none-any.whl", hash = "sha256:f631c04d2c48c52b84d0d0549c99ff3859c98df65b3101406327ecc7d53fbf12", size = 7484, upload-time = "2025-10-18T21:55:41.639Z" },
-]
-
-[[package]]
-name = "itsdangerous"
-version = "2.2.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/9c/cb/8ac0172223afbccb63986cc25049b154ecfb5e85932587206f42317be31d/itsdangerous-2.2.0.tar.gz", hash = "sha256:e0050c0b7da1eea53ffaf149c0cfbb5c6e2e2b69c4bef22c81fa6eb73e5f6173", size = 54410, upload-time = "2024-04-16T21:28:15.614Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/04/96/92447566d16df59b2a776c0fb82dbc4d9e07cd95062562af01e408583fc4/itsdangerous-2.2.0-py3-none-any.whl", hash = "sha256:c6242fc49e35958c8b15141343aa660db5fc54d4f13a1db01a3f5891b98700ef", size = 16234, upload-time = "2024-04-16T21:28:14.499Z" },
 ]
 
 [[package]]
@@ -1047,6 +1052,7 @@ dependencies = [
     { name = "duckdb" },
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "pandas", version = "3.0.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "requests" },
     { name = "tqdm" },
 ]
 
@@ -1071,10 +1077,11 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "chembl-webresource-client", specifier = "==0.10.7" },
+    { name = "chembl-webresource-client", specifier = ">=0.10.9" },
     { name = "click", specifier = ">=7.1.2" },
     { name = "duckdb", specifier = ">=1.1" },
     { name = "pandas", specifier = ">=1.5" },
+    { name = "requests", specifier = ">=2.28" },
     { name = "sphinx", marker = "extra == 'docs'" },
     { name = "sphinx-autodoc-typehints", marker = "extra == 'docs'" },
     { name = "sphinx-click", marker = "extra == 'docs'" },
@@ -1279,18 +1286,19 @@ wheels = [
 
 [[package]]
 name = "requests-cache"
-version = "0.7.5"
+version = "1.3.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs" },
-    { name = "itsdangerous" },
-    { name = "pyyaml" },
+    { name = "cattrs" },
+    { name = "platformdirs" },
     { name = "requests" },
     { name = "url-normalize" },
+    { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/64/1f/0ab7191793f991bc17cf453106838b39b1924312021ae89a1574de6cf151/requests-cache-0.7.5.tar.gz", hash = "sha256:08102daab3b06fb8c0de14a297e44ed5dfe44ccf0e2ba8c858a0f12aa32b109f", size = 1225849, upload-time = "2021-09-15T18:34:49.57Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/32/ab/a340c7f529646f16e5656a8ba1424ed0de406203e4554868491786628730/requests_cache-1.3.3.tar.gz", hash = "sha256:79b72d5ac5143992d1836ad78f4d8e65666061dd44e220548caab3723089826b", size = 101179, upload-time = "2026-07-03T19:48:57.963Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9a/8b/1a0edf935b70df1be64c5b2988e0322b14a697f89a7818dc12cae3d327f8/requests_cache-0.7.5-py3-none-any.whl", hash = "sha256:3189cad997359f6a57e3c305ca8ab313f359626cbd15426570dd48711d02930f", size = 39046, upload-time = "2021-09-15T18:34:52.06Z" },
+    { url = "https://files.pythonhosted.org/packages/a5/bf/c1775e49b350225bd851576ba75263bc728d8f05c0e31439a45f3429cc7b/requests_cache-1.3.3-py3-none-any.whl", hash = "sha256:c8df20ff874ebfc026959e3874e6c12bd6724934cdb10925915908453d4b17e4", size = 70788, upload-time = "2026-07-03T19:48:56.693Z" },
 ]
 
 [[package]]
@@ -1660,14 +1668,14 @@ wheels = [
 
 [[package]]
 name = "url-normalize"
-version = "1.4.3"
+version = "3.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "six" },
+    { name = "idna" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ec/ea/780a38c99fef750897158c0afb83b979def3b379aaac28b31538d24c4e8f/url-normalize-1.4.3.tar.gz", hash = "sha256:d23d3a070ac52a67b83a1c59a0e68f8608d1cd538783b401bc9de2c0fac999b2", size = 6024, upload-time = "2020-10-26T02:07:11.438Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/33/26/b60cce0211e94bb130e88dbcba87583f61c6ddf386fa6adc10a167461f6a/url_normalize-3.0.1.tar.gz", hash = "sha256:1655cd214159d9d47dc37aa6ce993c2149da44fa35cac6bafd90036a4eda3ac3", size = 28198, upload-time = "2026-09-22T22:20:54.513Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/65/1c/6c6f408be78692fc850006a2b6dea37c2b8592892534e09996e401efc74b/url_normalize-1.4.3-py2.py3-none-any.whl", hash = "sha256:ec3c301f04e5bb676d333a7fa162fa977ad2ca04b7e652bfc9fac4e405728eed", size = 6804, upload-time = "2020-10-26T02:07:13.218Z" },
+    { url = "https://files.pythonhosted.org/packages/9d/bf/98209a164859c81d9eec311ee2b35cd1e5b33c7be8d3665c08850557abe1/url_normalize-3.0.1-py3-none-any.whl", hash = "sha256:97ea68fc543b1fc9f270f34c90cf164453e7d490da2ec653dcd8ebd4e3ac1faf", size = 18296, upload-time = "2026-09-22T22:20:53.342Z" },
 ]
 
 [[package]]

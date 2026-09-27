@@ -136,3 +136,4 @@ data/*
 *.tsv
 *.csv
 *.txt
+tests/resources/*

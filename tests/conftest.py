@@ -11,7 +11,8 @@ def bulk_dir(tmp_path_factory):
     """Write a miniature SureChEMBL release to a temporary folder."""
     path = tmp_path_factory.mktemp("surechembl")
     con = duckdb.connect()
-    con.execute("""
+    con.execute(
+        """
         CREATE TABLE compounds (id BIGINT, smiles VARCHAR, inchi VARCHAR, inchi_key VARCHAR, mol_weight DOUBLE);
         INSERT INTO compounds VALUES
             (3827, 'C', 'InChI=1S/imatinib', 'KTUFNOKKBVMGRW-UHFFFAOYSA-N', 493.6),
@@ -45,7 +46,8 @@ def bulk_dir(tmp_path_factory):
 
         CREATE TABLE fields (id BIGINT, field_name VARCHAR);
         INSERT INTO fields VALUES (1,'desc'),(2,'clms'),(3,'abst'),(4,'ttl'),(5,'image'),(6,'molattachment');
-    """)
+    """
+    )
     for table in ("compounds", "patents", "patent_compound_map", "fields"):
         con.execute(f"COPY {table} TO '{path / (table + '.parquet')}' (FORMAT parquet)")
     con.close()

@@ -34,5 +34,3 @@ Patent Extractor
 ~~~~~~~~~~~~~~
 
 .. autofunction:: pemt.patent_extractor.patent_enrichment.extract_patent()
-
-

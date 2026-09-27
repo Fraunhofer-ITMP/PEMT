@@ -1,12 +1,14 @@
 name: code-formatter
-on: [push]
+
+on:
+  push:
+  pull_request:
+
 jobs:
   linting:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
-      - name: Linting
-        run: |
-          uvx pre-commit run --files src/*
-          uvx pre-commit run --files docs/*
+      - name: pre-commit
+        run: uvx pre-commit run --all-files --show-diff-on-failure

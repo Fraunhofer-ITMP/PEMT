@@ -121,25 +121,36 @@ def extract_patent(
         with open(state_file) as f:
             state = json.load(f)
         if state.get("settings") == settings:
-            patents = pd.read_csv(patent_file, sep="\t", dtype=str).reindex(columns=PATENT_COLUMNS)
+            patents = pd.read_csv(patent_file, sep="\t", dtype=str).reindex(
+                columns=PATENT_COLUMNS
+            )
             done = set(state.get("compounds_done", []))
             # Files from before duplicate records were merged are fixed up in place.
             merged = merge_duplicate_records(patents)
             if len(merged) != len(patents):
-                patents = merged.sort_values(["chembl", "date", "patent_id"], ignore_index=True)
+                patents = merged.sort_values(
+                    ["chembl", "date", "patent_id"], ignore_index=True
+                )
                 patents.to_csv(patent_file, sep="\t", index=False)
         else:
-            logger.info("Patent settings changed since the last run; querying all compounds again")
+            logger.info(
+                "Patent settings changed since the last run; querying all compounds again"
+            )
 
     todo = sorted(set(chemicals["schembl_id"]) - done)
-    logger.info(f"{chemicals['schembl_id'].nunique()} SureChEMBL compounds, {len(todo)} to query")
+    logger.info(
+        f"{chemicals['schembl_id'].nunique()} SureChEMBL compounds, {len(todo)} to query"
+    )
 
     if todo:
         own_connection = bulk is None
         bulk = bulk or SureChEMBLBulk(source)
         try:
             hits = bulk.patents_for_compounds(
-                todo, ipc_prefixes=settings["ipc_codes"], min_year=patent_year, sections=sections
+                todo,
+                ipc_prefixes=settings["ipc_codes"],
+                min_year=patent_year,
+                sections=sections,
             )
         finally:
             if own_connection:
@@ -150,15 +161,25 @@ def extract_patent(
             patent_id=hits["patent_number"],
             date=pd.to_datetime(hits["publication_date"]).dt.strftime("%Y-%m-%d"),
         )
-        new = chemicals.rename(columns={"schembl_id": "surechembl"}).merge(hits, on="surechembl")
+        new = chemicals.rename(columns={"schembl_id": "surechembl"}).merge(
+            hits, on="surechembl"
+        )
         new = new[PATENT_COLUMNS].fillna("").astype(str)
 
-        patents = pd.concat([patents, new], ignore_index=True) if not patents.empty else new
+        patents = (
+            pd.concat([patents, new], ignore_index=True) if not patents.empty else new
+        )
         patents = merge_duplicate_records(patents.drop_duplicates())
-        patents = patents.sort_values(["chembl", "date", "patent_id"], ignore_index=True)
+        patents = patents.sort_values(
+            ["chembl", "date", "patent_id"], ignore_index=True
+        )
         patents.to_csv(patent_file, sep="\t", index=False)
         with open(state_file, "w") as f:
-            json.dump({"settings": settings, "compounds_done": sorted(done | set(todo))}, f, indent=2)
+            json.dump(
+                {"settings": settings, "compounds_done": sorted(done | set(todo))},
+                f,
+                indent=2,
+            )
 
     current = patents[patents["chembl"].isin(set(chemicals["chembl"]))]
     logger.info(

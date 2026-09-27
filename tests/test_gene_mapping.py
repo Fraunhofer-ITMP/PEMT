@@ -28,7 +28,17 @@ HGNC_ROWS = [
 
 @pytest.fixture()
 def hgnc_dir(tmp_path):
-    df = pd.DataFrame(HGNC_ROWS, columns=["hgnc_id", "symbol", "status", "prev_symbol", "alias_symbol", "uniprot_ids"])
+    df = pd.DataFrame(
+        HGNC_ROWS,
+        columns=[
+            "hgnc_id",
+            "symbol",
+            "status",
+            "prev_symbol",
+            "alias_symbol",
+            "uniprot_ids",
+        ],
+    )
     df["name"] = "x"  # extra columns in the real file are ignored
     df.to_csv(tmp_path / "hgnc_complete_set.txt", sep="\t", index=False)
     return tmp_path
@@ -36,7 +46,14 @@ def hgnc_dir(tmp_path):
 
 def test_load_hgnc_uses_fresh_cache(hgnc_dir):
     df = load_hgnc(str(hgnc_dir), url=UNREACHABLE)  # no download needed
-    assert list(df.columns) == ["hgnc_id", "symbol", "status", "prev_symbol", "alias_symbol", "uniprot_ids"]
+    assert list(df.columns) == [
+        "hgnc_id",
+        "symbol",
+        "status",
+        "prev_symbol",
+        "alias_symbol",
+        "uniprot_ids",
+    ]
     assert len(df) == len(HGNC_ROWS)
 
 
@@ -56,7 +73,18 @@ def test_load_hgnc_without_copy_or_network(tmp_path):
 def test_symbols_to_uniprot(hgnc_dir):
     hgnc = load_hgnc(str(hgnc_dir), url=UNREACHABLE)
     mapping = symbols_to_uniprot(
-        ["ABL1", "abl1 ", "MLL", "CGRP", "CALCA", "SHARED", "MIR21", "OLDGONE", "NOTAGENE"], hgnc
+        [
+            "ABL1",
+            "abl1 ",
+            "MLL",
+            "CGRP",
+            "CALCA",
+            "SHARED",
+            "MIR21",
+            "OLDGONE",
+            "NOTAGENE",
+        ],
+        hgnc,
     )
     assert mapping == {
         "ABL1": ["P00519"],
@@ -89,27 +117,43 @@ class FakeActivity:
 
 @pytest.fixture()
 def fake_chembl(monkeypatch, hgnc_dir):
-    targets = {"P00519": ["CHEMBL1862"], "P01258": ["CHEMBL_CALCA_1"], "P06881": ["CHEMBL_CALCA_2"]}
-    monkeypatch.setattr(extractor, "get_single_protein_targets", lambda u: targets.get(u, []))
+    targets = {
+        "P00519": ["CHEMBL1862"],
+        "P01258": ["CHEMBL_CALCA_1"],
+        "P06881": ["CHEMBL_CALCA_2"],
+    }
+    monkeypatch.setattr(
+        extractor, "get_single_protein_targets", lambda u: targets.get(u, [])
+    )
     monkeypatch.setattr(extractor, "activity", FakeActivity())
     monkeypatch.setattr(extractor, "get_chembl_release", lambda: "ChEMBL_TEST")
-    monkeypatch.setattr(extractor, "load_hgnc", lambda d: load_hgnc(str(hgnc_dir), url=UNREACHABLE))
+    monkeypatch.setattr(
+        extractor, "load_hgnc", lambda d: load_hgnc(str(hgnc_dir), url=UNREACHABLE)
+    )
     monkeypatch.setattr(extractor, "MAPPER_DIR", str(hgnc_dir))
     return hgnc_dir
 
 
 def test_gene_with_several_proteins_uses_all_of_them(fake_chembl):
-    assert extractor.target_to_chemical("CALCA", protein_mapping={"CALCA": ["P01258", "P06881"]}) == [
-        "CHEMBL_A", "CHEMBL_B",
+    assert extractor.target_to_chemical(
+        "CALCA", protein_mapping={"CALCA": ["P01258", "P06881"]}
+    ) == [
+        "CHEMBL_A",
+        "CHEMBL_B",
     ]
     # the old table stored them as one string; that still works
-    assert extractor.target_to_chemical("CALCA", protein_mapping={"CALCA": "P01258, P06881"}) == [
-        "CHEMBL_A", "CHEMBL_B",
+    assert extractor.target_to_chemical(
+        "CALCA", protein_mapping={"CALCA": "P01258, P06881"}
+    ) == [
+        "CHEMBL_A",
+        "CHEMBL_B",
     ]
 
 
 def test_extract_chemicals_from_symbols(fake_chembl):
-    result = extractor.extract_chemicals("sym", gene_list=["ABL1", "MLL", "CALCA", "NOTAGENE"])
+    result = extractor.extract_chemicals(
+        "sym", gene_list=["ABL1", "MLL", "CALCA", "NOTAGENE"]
+    )
     assert dict(result) == {
         "ABL1": ["CHEMBL941"],
         "CALCA": ["CHEMBL_A", "CHEMBL_B"],

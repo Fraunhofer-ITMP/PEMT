@@ -15,7 +15,9 @@ HGNC_URL = "https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hg
 CHEMBL_STATUS_URL = "https://www.ebi.ac.uk/chembl/api/data/status.json"
 
 
-def load_hgnc(cache_dir: str, max_age_days: int = 30, url: str = HGNC_URL) -> pd.DataFrame:
+def load_hgnc(
+    cache_dir: str, max_age_days: int = 30, url: str = HGNC_URL
+) -> pd.DataFrame:
     """Load the HGNC complete set, downloading it when the local copy is missing or old.
 
     HGNC publishes the file monthly. If a download fails but an older copy exists, the
@@ -32,7 +34,9 @@ def load_hgnc(cache_dir: str, max_age_days: int = 30, url: str = HGNC_URL) -> pd
     import requests
 
     path = os.path.join(cache_dir, "hgnc_complete_set.txt")
-    age_days = (time.time() - os.path.getmtime(path)) / 86400 if os.path.exists(path) else None
+    age_days = (
+        (time.time() - os.path.getmtime(path)) / 86400 if os.path.exists(path) else None
+    )
 
     if age_days is None or age_days > max_age_days:
         try:
@@ -45,14 +49,29 @@ def load_hgnc(cache_dir: str, max_age_days: int = 30, url: str = HGNC_URL) -> pd
             os.replace(path + ".tmp", path)
         except Exception as exc:  # network problems: fall back to an older copy
             if age_days is None:
-                raise RuntimeError(f"Could not download the HGNC complete set from {url}: {exc}") from exc
-            logger.warning(f"Could not update the HGNC file ({exc}); using the {age_days:.0f} day old copy")
+                raise RuntimeError(
+                    f"Could not download the HGNC complete set from {url}: {exc}"
+                ) from exc
+            logger.warning(
+                f"Could not update the HGNC file ({exc}); using the {age_days:.0f} day old copy"
+            )
 
-    columns = ["hgnc_id", "symbol", "status", "prev_symbol", "alias_symbol", "uniprot_ids"]
-    return pd.read_csv(path, sep="\t", dtype=str, usecols=columns, keep_default_na=False)
+    columns = [
+        "hgnc_id",
+        "symbol",
+        "status",
+        "prev_symbol",
+        "alias_symbol",
+        "uniprot_ids",
+    ]
+    return pd.read_csv(
+        path, sep="\t", dtype=str, usecols=columns, keep_default_na=False
+    )
 
 
-def symbols_to_uniprot(symbols: Iterable[str], hgnc: pd.DataFrame) -> Dict[str, List[str]]:
+def symbols_to_uniprot(
+    symbols: Iterable[str], hgnc: pd.DataFrame
+) -> Dict[str, List[str]]:
     """Map gene symbols to UniProt accessions with the HGNC complete set.
 
     Each symbol is resolved in this order: approved symbol, previous symbol, alias. A
@@ -102,11 +121,17 @@ def symbols_to_uniprot(symbols: Iterable[str], hgnc: pd.DataFrame) -> Dict[str, 
             result[symbol] = []
 
     if renamed:
-        logger.info(f"{len(renamed)} symbols mapped via previous/alias symbols: {', '.join(renamed[:10])}")
+        logger.info(
+            f"{len(renamed)} symbols mapped via previous/alias symbols: {', '.join(renamed[:10])}"
+        )
     if ambiguous:
-        logger.warning(f"{len(ambiguous)} symbols are ambiguous and were skipped: {'; '.join(ambiguous[:10])}")
+        logger.warning(
+            f"{len(ambiguous)} symbols are ambiguous and were skipped: {'; '.join(ambiguous[:10])}"
+        )
     if unresolved:
-        logger.warning(f"{len(unresolved)} symbols not found in HGNC: {', '.join(map(str, unresolved[:10]))}")
+        logger.warning(
+            f"{len(unresolved)} symbols not found in HGNC: {', '.join(map(str, unresolved[:10]))}"
+        )
     return result
 
 
@@ -146,7 +171,9 @@ def get_single_protein_targets(uniprot_id: Optional[str]) -> List[str]:
 """Chemical mapper functions"""
 
 
-def get_chembl_structures(chembl_ids: Iterable[str], chunk_size: int = 50) -> pd.DataFrame:
+def get_chembl_structures(
+    chembl_ids: Iterable[str], chunk_size: int = 50
+) -> pd.DataFrame:
     """Get the preferred name and standard InChIKey of ChEMBL compounds.
 
     :param chembl_ids: ChEMBL compound identifiers (e.g. ``CHEMBL941``)
@@ -176,9 +203,20 @@ def get_chembl_structures(chembl_ids: Iterable[str], chunk_size: int = 50) -> pd
     df = pd.DataFrame(rows, columns=["chembl", "name", "inchi_key"])
     missing = set(ids) - set(df["chembl"])
     if missing:
-        logger.warning(f"{len(missing)} ChEMBL ids not found in ChEMBL, e.g. {sorted(missing)[:5]}")
+        logger.warning(
+            f"{len(missing)} ChEMBL ids not found in ChEMBL, e.g. {sorted(missing)[:5]}"
+        )
         df = pd.concat(
-            [df, pd.DataFrame({"chembl": sorted(missing), "name": sorted(missing), "inchi_key": None})],
+            [
+                df,
+                pd.DataFrame(
+                    {
+                        "chembl": sorted(missing),
+                        "name": sorted(missing),
+                        "inchi_key": None,
+                    }
+                ),
+            ],
             ignore_index=True,
         )
     return df.sort_values("chembl", ignore_index=True)

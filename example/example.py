@@ -17,7 +17,6 @@ from pemt.patent_extractor.patent_enrichment import extract_patent
 logger = logging.getLogger(__name__)
 
 
-
 def get_top_disease():
     """Get top 5 rare diseases based on the epidemiology found in Orphanet"""
 

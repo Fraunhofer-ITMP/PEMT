@@ -20,7 +20,7 @@
 
 </h1>
 
-> [!WARNING]  
+> [!WARNING]
 > **Currently SureCHEMBL has undergone a major restructuring. The tool might not function in that case. The tool will be updated in soon!!**
 
 ## Table of Contents
@@ -84,11 +84,11 @@ For running PEMT from the gene level, you need the input file with the following
 | ------ | -------- |
 | HGNC_Symbol_1 | Uniprot_ID_1
 | HGNC_Symbol_2 | Uniprot_ID_2
-| HGNC_Symbol_3 | Uniprot_ID_3  
+| HGNC_Symbol_3 | Uniprot_ID_3
 
 For running PEMT from the chemical level, you need the input file with the following structure:
 
-| chembl |  
+| chembl |
 | ------ |
 | ChEMBL_ID_1
 | ChEMBL_ID_2

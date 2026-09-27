@@ -68,7 +68,9 @@ def resolve_source(source: Optional[str] = None) -> str:
         return source if source.endswith("/") else source + "/"
 
     path = os.path.abspath(os.path.expanduser(source))
-    missing = [t for t in TABLES if not os.path.exists(os.path.join(path, f"{t}.parquet"))]
+    missing = [
+        t for t in TABLES if not os.path.exists(os.path.join(path, f"{t}.parquet"))
+    ]
     if missing:
         raise FileNotFoundError(
             f"SureChEMBL source folder {path} is missing: "
@@ -90,7 +92,9 @@ def _ipc_condition(variable: str, prefixes: Iterable[str]) -> str:
             raise ValueError(f"Invalid IPC prefix: {prefix!r}")
         by_length.setdefault(len(prefix), []).append(prefix)
     if not by_length:
-        raise ValueError("ipc_prefixes must not be empty; pass None to disable the filter")
+        raise ValueError(
+            "ipc_prefixes must not be empty; pass None to disable the filter"
+        )
     parts = [
         f"left(replace({variable}, ' ', ''), {length}) IN ({', '.join(repr(p) for p in sorted(codes))})"
         for length, codes in sorted(by_length.items())
@@ -121,7 +125,9 @@ class SureChEMBLBulk:
         self.con.execute(f"SET enable_progress_bar = {str(progress_bar).lower()};")
         for table in TABLES:
             location = f"{self.source}{table}.parquet".replace("'", "''")
-            self.con.execute(f"CREATE VIEW {table} AS SELECT * FROM read_parquet('{location}')")
+            self.con.execute(
+                f"CREATE VIEW {table} AS SELECT * FROM read_parquet('{location}')"
+            )
         logger.info("Using SureChEMBL bulk data from %s", self.source)
 
     def close(self) -> None:
@@ -185,15 +191,21 @@ class SureChEMBLBulk:
         if sections is not None:
             unknown = set(sections) - set(SECTIONS)
             if unknown:
-                raise ValueError(f"Unknown sections {sorted(unknown)}; choose from {sorted(SECTIONS)}")
+                raise ValueError(
+                    f"Unknown sections {sorted(unknown)}; choose from {sorted(SECTIONS)}"
+                )
             field_ids = sorted(SECTIONS[s] for s in set(sections))
             if not field_ids:
-                raise ValueError("sections must not be empty; pass None for any section")
+                raise ValueError(
+                    "sections must not be empty; pass None for any section"
+                )
             map_filters.append(f"m.field_id IN ({', '.join(map(str, field_ids))})")
 
         patent_filters = []
         if min_year is not None:
-            patent_filters.append(f"p.publication_date >= DATE '{int(min_year):04d}-01-01'")
+            patent_filters.append(
+                f"p.publication_date >= DATE '{int(min_year):04d}-01-01'"
+            )
         if ipc_prefixes is not None:
             matched = f"list_filter(p.ipcr, x -> {_ipc_condition('x', ipc_prefixes)})"
             patent_filters.append(f"len({matched}) > 0")

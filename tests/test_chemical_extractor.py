@@ -20,11 +20,16 @@ class FakeActivity:
     DATA = {
         "CHEMBL1862": [  # ABL1
             {"molecule_chembl_id": "CHEMBL941", "pchembl_value": "8.1"},
-            {"molecule_chembl_id": "CHEMBL941", "pchembl_value": "7.5"},  # duplicate compound
+            {
+                "molecule_chembl_id": "CHEMBL941",
+                "pchembl_value": "7.5",
+            },  # duplicate compound
             {"molecule_chembl_id": "CHEMBL_WEAK", "pchembl_value": "5.2"},  # below 6
             {"molecule_chembl_id": "CHEMBL_NOVALUE", "pchembl_value": None},
         ],
-        "CHEMBL1936": [{"molecule_chembl_id": "CHEMBL941", "pchembl_value": "6.0"}],  # KIT
+        "CHEMBL1936": [
+            {"molecule_chembl_id": "CHEMBL941", "pchembl_value": "6.0"}
+        ],  # KIT
     }
 
     def __init__(self):
@@ -38,7 +43,9 @@ class FakeActivity:
 @pytest.fixture()
 def fake_chembl(monkeypatch):
     targets = {"P00519": ["CHEMBL1862"], "P10721": ["CHEMBL1936"]}
-    monkeypatch.setattr(extractor, "get_single_protein_targets", lambda u: targets.get(u, []))
+    monkeypatch.setattr(
+        extractor, "get_single_protein_targets", lambda u: targets.get(u, [])
+    )
     fake = FakeActivity()
     monkeypatch.setattr(extractor, "activity", fake)
     return fake
@@ -52,7 +59,9 @@ def test_target_to_chemical_uniprot(fake_chembl):
 
 
 def test_target_to_chemical_symbol(fake_chembl):
-    assert extractor.target_to_chemical("KIT", protein_mapping={"KIT": "P10721"}) == ["CHEMBL941"]
+    assert extractor.target_to_chemical("KIT", protein_mapping={"KIT": "P10721"}) == [
+        "CHEMBL941"
+    ]
     assert extractor.target_to_chemical("NOTAGENE", protein_mapping={}) == []
 
 

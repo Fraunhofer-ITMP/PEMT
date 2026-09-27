@@ -51,7 +51,11 @@ def workdir(tmp_path, monkeypatch, chembl_calls):
 
 
 def write_gene_file(workdir, name="run"):
-    genes = {"ABL1": ["CHEMBL941", "CHEMBL_BIOLOGIC"], "KIT": ["CHEMBL941", "CHEMBL_OTHER"], "EMPTY": []}
+    genes = {
+        "ABL1": ["CHEMBL941", "CHEMBL_BIOLOGIC"],
+        "KIT": ["CHEMBL941", "CHEMBL_OTHER"],
+        "EMPTY": [],
+    }
     (workdir / f"{name}_gene_to_chemicals.json").write_text(json.dumps(genes))
 
 
@@ -72,7 +76,9 @@ def test_harmonize_from_genes(workdir, bulk_dir, chembl_calls):
 
 def test_run_without_any_chemicals(workdir, bulk_dir, chembl_calls):
     """Genes without ChEMBL chemicals: no lookups, an empty chemicals file, no patents."""
-    (workdir / "empty_gene_to_chemicals.json").write_text(json.dumps({"GENE1": [], "GENE2": []}))
+    (workdir / "empty_gene_to_chemicals.json").write_text(
+        json.dumps({"GENE1": [], "GENE2": []})
+    )
     assert harmonizer.harmonize_chemicals("empty", source=str(bulk_dir)).empty
     assert chembl_calls == []
     assert (workdir / "empty_chemicals.tsv").exists()
@@ -93,7 +99,9 @@ def test_harmonize_from_user_chemicals(workdir, bulk_dir):
         workdir / "user_chemicals.tsv", sep="\t", index=False
     )
     df = harmonizer.harmonize_chemicals("user", from_genes=False, source=str(bulk_dir))
-    assert df.set_index("chembl")["schembl_id"].to_dict().get("CHEMBL941") == "SCHEMBL3827"
+    assert (
+        df.set_index("chembl")["schembl_id"].to_dict().get("CHEMBL941") == "SCHEMBL3827"
+    )
     assert pd.isna(df.set_index("chembl").loc["CHEMBL_NOTINSCHEMBL", "schembl_id"])
 
 
@@ -152,7 +160,10 @@ def test_extract_patent_uses_cache(workdir, bulk_dir):
 def test_one_chemical_with_two_surechembl_records(workdir, bulk_dir):
     """A ChEMBL chemical matching two SureChEMBL records gets one row per patent."""
     pd.DataFrame(
-        {"chembl": ["CHEMBL941", "CHEMBL941"], "schembl_id": ["SCHEMBL3827", "SCHEMBL9"]}
+        {
+            "chembl": ["CHEMBL941", "CHEMBL941"],
+            "schembl_id": ["SCHEMBL3827", "SCHEMBL9"],
+        }
     ).to_csv(workdir / "dup_chemicals.tsv", sep="\t", index=False)
 
     df = enrichment.extract_patent("dup", source=str(bulk_dir))
@@ -177,11 +188,15 @@ def test_cli_run_patent_extractor(workdir, bulk_dir):
         pemt.cli.main,
         [
             "run-patent-extractor",
-            "--name", "cli",
+            "--name",
+            "cli",
             "--chemical",
-            "--chemical-data", str(chemical_file),
-            "--surechembl-source", str(bulk_dir),
-            "--sections", "claims",
+            "--chemical-data",
+            str(chemical_file),
+            "--surechembl-source",
+            str(bulk_dir),
+            "--sections",
+            "claims",
         ],
     )
     assert result.exit_code == 0, result.output
@@ -202,7 +217,9 @@ def test_live_chembl_structures():
     """Asks the real ChEMBL web service for imatinib's name and InChIKey."""
     from pemt.utils import get_chembl_structures
 
-    df = get_chembl_structures(["CHEMBL941", "CHEMBL_DOES_NOT_EXIST"]).set_index("chembl")
+    df = get_chembl_structures(["CHEMBL941", "CHEMBL_DOES_NOT_EXIST"]).set_index(
+        "chembl"
+    )
     assert df.loc["CHEMBL941", "inchi_key"] == "KTUFNOKKBVMGRW-UHFFFAOYSA-N"
     assert df.loc["CHEMBL941", "name"] == "IMATINIB"
     assert pd.isna(df.loc["CHEMBL_DOES_NOT_EXIST", "inchi_key"])

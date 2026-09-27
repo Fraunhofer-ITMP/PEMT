@@ -31,15 +31,23 @@ def _chembl_ids_for_run(analysis_name: str, from_genes: bool) -> list:
             )
         with open(gene_file) as f:
             gene_chemical_dict = json.load(f)
-        genes_skipped = sum(1 for chemicals in gene_chemical_dict.values() if not chemicals)
+        genes_skipped = sum(
+            1 for chemicals in gene_chemical_dict.values() if not chemicals
+        )
         if genes_skipped:
-            logger.info(f"{genes_skipped} genes have no active chemicals and are skipped")
-        return sorted({c for chemicals in gene_chemical_dict.values() for c in chemicals})
+            logger.info(
+                f"{genes_skipped} genes have no active chemicals and are skipped"
+            )
+        return sorted(
+            {c for chemicals in gene_chemical_dict.values() for c in chemicals}
+        )
 
     chemical_file = f"{PATENT_DIR}/{analysis_name}_chemicals.tsv"
     df = pd.read_csv(chemical_file, sep="\t", dtype=str)
     if "chembl" not in df.columns:
-        raise ValueError(f'{chemical_file} needs a "chembl" column with ChEMBL compound ids')
+        raise ValueError(
+            f'{chemical_file} needs a "chembl" column with ChEMBL compound ids'
+        )
     return sorted(set(df["chembl"].dropna()))
 
 
@@ -75,7 +83,9 @@ def harmonize_chemicals(
             cached = previous.reindex(columns=CHEMICAL_COLUMNS)
 
     todo = sorted(set(chembl_ids) - set(cached["chembl"]))
-    logger.info(f"{len(chembl_ids)} chemicals, {len(todo)} not yet mapped to SureChEMBL")
+    logger.info(
+        f"{len(chembl_ids)} chemicals, {len(todo)} not yet mapped to SureChEMBL"
+    )
 
     if todo:
         structures = get_chembl_structures(todo)
@@ -98,7 +108,9 @@ def harmonize_chemicals(
             f"Mapped {new.dropna(subset=['schembl_id'])['chembl'].nunique()} of {len(todo)} "
             f"new chemicals to SureChEMBL"
         )
-        cached = pd.concat([cached, new], ignore_index=True) if not cached.empty else new
+        cached = (
+            pd.concat([cached, new], ignore_index=True) if not cached.empty else new
+        )
         cached = cached.sort_values(["chembl", "schembl_id"], ignore_index=True)
 
     # Always write the file (even when empty) so the patent step finds it.

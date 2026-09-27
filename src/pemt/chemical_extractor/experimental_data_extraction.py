@@ -14,7 +14,12 @@ from chembl_webresource_client.new_client import new_client
 from tqdm import tqdm
 
 from pemt.constants import MAPPER_DIR
-from pemt.utils import get_chembl_release, get_single_protein_targets, load_hgnc, symbols_to_uniprot
+from pemt.utils import (
+    get_chembl_release,
+    get_single_protein_targets,
+    load_hgnc,
+    symbols_to_uniprot,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -80,9 +85,17 @@ def target_to_chemical(
             )
         uniprot_ids = protein_mapping.get(protein) or []
         if isinstance(uniprot_ids, str):  # e.g. "O43687, Q9P0M2" or "O43687|Q9P0M2"
-            uniprot_ids = [u.strip() for u in uniprot_ids.replace("|", ",").split(",") if u.strip()]
+            uniprot_ids = [
+                u.strip() for u in uniprot_ids.replace("|", ",").split(",") if u.strip()
+            ]
 
-    targets = sorted({t for uniprot_id in uniprot_ids for t in get_single_protein_targets(uniprot_id)})
+    targets = sorted(
+        {
+            t
+            for uniprot_id in uniprot_ids
+            for t in get_single_protein_targets(uniprot_id)
+        }
+    )
 
     chemicals = {}
     for target_chembl in targets:
@@ -160,13 +173,19 @@ def extract_chemicals(
     else:
         proteins = gene_list
 
-    proteins = sorted({str(p).strip() for p in proteins if isinstance(p, str) and str(p).strip()})
+    proteins = sorted(
+        {str(p).strip() for p in proteins if isinstance(p, str) and str(p).strip()}
+    )
 
     # Record which releases this run used (ChEMBL changes a few times a year).
     info_file = f"{MAPPER_DIR}/{analysis_name}_run_info.json"
     run_info = json.load(open(info_file)) if os.path.exists(info_file) else {}
     chembl_release = get_chembl_release()
-    if run_info.get("chembl_release") and chembl_release and run_info["chembl_release"] != chembl_release:
+    if (
+        run_info.get("chembl_release")
+        and chembl_release
+        and run_info["chembl_release"] != chembl_release
+    ):
         logger.warning(
             f"Cached results of '{analysis_name}' come from {run_info['chembl_release']}, ChEMBL now serves "
             f"{chembl_release}; delete {analysis_name}_gene_to_chemicals.json to redo them"
@@ -182,8 +201,13 @@ def extract_chemicals(
             hgnc = load_hgnc(MAPPER_DIR)
             hgnc_mapper = symbols_to_uniprot(todo, hgnc)
             hgnc_file = os.path.join(MAPPER_DIR, "hgnc_complete_set.txt")
-            run_info["hgnc_file_date"] = datetime.date.fromtimestamp(os.path.getmtime(hgnc_file)).isoformat()
-            run_info["symbol_to_uniprot"] = {**run_info.get("symbol_to_uniprot", {}), **hgnc_mapper}
+            run_info["hgnc_file_date"] = datetime.date.fromtimestamp(
+                os.path.getmtime(hgnc_file)
+            ).isoformat()
+            run_info["symbol_to_uniprot"] = {
+                **run_info.get("symbol_to_uniprot", {}),
+                **hgnc_mapper,
+            }
 
     # Loop to get chemicals related to target
     for identifier in tqdm(proteins, desc="Extracting chemicals for targets"):
@@ -205,7 +229,9 @@ def extract_chemicals(
             new_count = 0
 
     # Save dict for re-use
-    if new_count > 0 or not os.path.exists(f"{MAPPER_DIR}/{analysis_name}_gene_to_chemicals.json"):
+    if new_count > 0 or not os.path.exists(
+        f"{MAPPER_DIR}/{analysis_name}_gene_to_chemicals.json"
+    ):
         with open(f"{MAPPER_DIR}/{analysis_name}_gene_to_chemicals.json", "w") as f:
             json.dump(gene_chemical_dict, f, ensure_ascii=False, indent=2)
 

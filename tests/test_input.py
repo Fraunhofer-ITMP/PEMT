@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
-"""Tests for CDF patient incorporation."""
+"""Tests for the chemical extractor input handling (calls ChEMBL, so marked live)."""
 
 import os
 import unittest
+
+import pytest
 
 from pemt.chemical_extractor.experimental_data_extraction import extract_chemicals
 from pemt.constants import MAPPER_DIR
@@ -12,6 +14,7 @@ TEST_FOLDER = os.path.dirname(os.path.realpath(__file__))
 DUMMY_DATA = os.path.join(TEST_FOLDER, "resources", "dummy_gene.tsv")
 
 
+@pytest.mark.live
 class TestInput(unittest.TestCase):
     """Tests for input method."""
 

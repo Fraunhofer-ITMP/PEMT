@@ -13,7 +13,12 @@ import pandas as pd
 import pytest
 
 from pemt.constants import VALID_CODES
-from pemt.surechembl import BULK_DATA_URL, PATENT_COLUMNS, SureChEMBLBulk, resolve_source
+from pemt.surechembl import (
+    BULK_DATA_URL,
+    PATENT_COLUMNS,
+    SureChEMBLBulk,
+    resolve_source,
+)
 
 IMATINIB_KEY = "KTUFNOKKBVMGRW-UHFFFAOYSA-N"
 
@@ -47,7 +52,11 @@ def test_all_patents_without_filters(bulk):
     df = bulk.patents_for_compounds([3827])
     assert list(df.columns) == PATENT_COLUMNS
     assert set(df["patent_number"]) == {
-        "WO-2011041462-A2", "EP-2405272-A1", "US-5153197-A", "EP-2389136-A1", "CN-104817498-A",
+        "WO-2011041462-A2",
+        "EP-2405272-A1",
+        "US-5153197-A",
+        "EP-2389136-A1",
+        "CN-104817498-A",
     }
 
 
@@ -76,7 +85,9 @@ def test_sections_filter(bulk):
 
 
 def test_several_compounds_and_id_formats(bulk):
-    df = bulk.patents_for_compounds(["SCHEMBL3827", 9, "42"], ipc_prefixes=VALID_CODES, min_year=2000)
+    df = bulk.patents_for_compounds(
+        ["SCHEMBL3827", 9, "42"], ipc_prefixes=VALID_CODES, min_year=2000
+    )
     assert df.groupby("compound_id")["patent_number"].apply(list).to_dict() == {
         9: ["EP-2389136-A1"],
         3827: ["WO-2011041462-A2", "EP-2389136-A1"],
@@ -97,7 +108,14 @@ def test_live_latest_release_schema():
     with SureChEMBLBulk(progress_bar=False) as b:
         for table, required in {
             "compounds": {"id", "inchi_key"},
-            "patents": {"id", "patent_number", "publication_date", "family_id", "ipcr", "assignee"},
+            "patents": {
+                "id",
+                "patent_number",
+                "publication_date",
+                "family_id",
+                "ipcr",
+                "assignee",
+            },
             "patent_compound_map": {"patent_id", "compound_id", "field_id"},
         }.items():
             columns = {row[0] for row in b.con.execute(f"DESCRIBE {table}").fetchall()}

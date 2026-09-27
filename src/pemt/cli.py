@@ -222,9 +222,13 @@ def _save_patent_outputs(name: str, patent_df: pd.DataFrame, with_genes: bool) -
                 chemical_to_gene_mapper[chemical].add(gene)
 
         patent_df = patent_df.assign(
-            genes=patent_df["chembl"].map(lambda x: ", ".join(sorted(chemical_to_gene_mapper[x])))
+            genes=patent_df["chembl"].map(
+                lambda x: ", ".join(sorted(chemical_to_gene_mapper[x]))
+            )
         )
-        patent_df.to_csv(f"{PATENT_DIR}/{name}_gene_patent_data.tsv", sep="\t", index=False)
+        patent_df.to_csv(
+            f"{PATENT_DIR}/{name}_gene_patent_data.tsv", sep="\t", index=False
+        )
 
     click.echo("Done with retrieval of patents")
     click.echo(f"Data file can be found under {PATENT_DIR}")

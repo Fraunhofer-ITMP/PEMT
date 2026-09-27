@@ -1,10 +1,13 @@
 name: publish
 
-# Publishes to PyPI when a GitHub release is published (e.g. tag v0.1.0).
-# Uses PyPI trusted publishing: no API token is stored in the repository.
+# Publishes to PyPI when a GitHub release is published (e.g. tag v0.1.0), and to
+# TestPyPI when a tag starting with "testpypi-" is pushed (works from any branch).
+# Uses trusted publishing: no API token is stored in the repository.
 on:
   release:
     types: [published]
+  push:
+    tags: ["testpypi-*"]
   workflow_dispatch:
     inputs:
       target:
@@ -33,7 +36,7 @@ jobs:
   publish:
     needs: build
     runs-on: ubuntu-latest
-    environment: ${{ github.event_name == 'release' && 'pypi' || inputs.target }}
+    environment: ${{ github.event_name == 'release' && 'pypi' || github.event_name == 'push' && 'testpypi' || inputs.target }}
     permissions:
       id-token: write  # for trusted publishing
     steps:
@@ -42,10 +45,11 @@ jobs:
           name: dist
           path: dist/
       - name: Publish to TestPyPI
-        if: github.event_name == 'workflow_dispatch' && inputs.target == 'testpypi'
+        if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.target == 'testpypi')
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
+          skip-existing: true  # TestPyPI never accepts the same version twice
       - name: Publish to PyPI
-        if: github.event_name == 'release' || inputs.target == 'pypi'
+        if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.target == 'pypi')
         uses: pypa/gh-action-pypi-publish@release/v1

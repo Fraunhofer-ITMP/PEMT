@@ -29,6 +29,7 @@ dependencies = [
     "click>=7.1.2",
     "pandas>=1.5",
     "chembl_webresource_client==0.10.7",
+    "duckdb>=1.1",
     "tqdm>=4.60.0",
     "selenium==3.141.0",
     "pubchempy>=1.0.4",
@@ -76,7 +77,8 @@ include = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-markers = ["live: tests that call the real ChEMBL/SureChEMBL APIs"]
+addopts = "-m 'not live'"
+markers = ["live: tests that read real ChEMBL or SureChEMBL data over the network"]
 
 [tool.coverage.run]
 branch = true

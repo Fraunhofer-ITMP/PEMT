@@ -12,7 +12,7 @@ Welcome to PEMT's documentation!
 .. raw:: html
 
    <h1 align="center">
-     <img src="https://travis-ci.com/Fraunhofer-ITMP/PEMT.svg?branch=master" />
+     <img src="https://github.com/Fraunhofer-ITMP/PEMT/actions/workflows/tests.yml/badge.svg" alt="Tests" />
      <img src='https://readthedocs.org/projects/pemt/badge/?version=latest' alt='Documentation Status' />
      <img src='https://img.shields.io/github/license/Fraunhofer-ITMP/PEMT?color=blue' alt='GitHub License' />
    </h1>
@@ -23,7 +23,7 @@ PEMT takes a two-step approach to collect patent documents relevant for drug dis
 
 1. The ``chemical_extractor`` module extraction of chemicals that directly regulate (i.e. activation or inhibition) genes of interest based on functional or biochemical assays found within ChEMBL.
 
-2. The ``patent_extractor`` module interlinking these chemicals to patent documents by systematically querying SureChEMBL, a patent database.
+2. The ``patent_extractor`` module interlinking these chemicals to patent documents in SureChEMBL, a patent database, using its bulk data release (queried with DuckDB).
 
 General info
 -------------
@@ -49,26 +49,25 @@ You may instead want to use the development version from Github, by running
 
    $ python3 -m pip install git+https://github.com/Fraunhofer-ITMP/PEMT.git
 
-For contributors, the repository can be cloned from `GitHub`_ and installed in editable mode using:
+For contributors, the repository can be cloned from `GitHub`_ and set up with `uv <https://docs.astral.sh/uv/>`_:
 
 .. code:: shell
 
    $ git clone https://github.com/Fraunhofer-ITMP/PEMT.git
    $ cd PEMT
-   $ python3 -m pip install -e .
+   $ uv sync
+   $ uv run pytest
 
 Dependency
 --------------
-- Python 3.8+
-- Installation of chromedriver
+- Python 3.10+
 
 Mandatory
 ~~~~~~~~~
 
 - Pandas
 - CheMBL Webresource
-- PubChemPy
-- Chromedriver
+- DuckDB (to query the SureChEMBL bulk data)
 
 
 For API information to use this library, see the :ref:`dev-guide`.
@@ -83,4 +82,3 @@ Disclaimer
 -----------
 
 PEMT is a scientific tool that has been developed in an academic capacity, and thus comes with no warranty or guarantee of maintenance, support, or back-up of data.
-

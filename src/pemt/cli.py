@@ -7,14 +7,13 @@ import logging
 from collections import defaultdict
 
 import click
-import numpy as np
 import pandas as pd
-from tqdm import tqdm
 
 from pemt.chemical_extractor.experimental_data_extraction import extract_chemicals
 from pemt.constants import MAPPER_DIR, PATENT_DIR
 from pemt.patent_extractor.patent_chemical_harmonizer import harmonize_chemicals
 from pemt.patent_extractor.patent_enrichment import extract_patent
+from pemt.surechembl import SECTIONS, SureChEMBLBulk
 
 logger = logging.getLogger(__name__)
 
@@ -33,9 +32,10 @@ input_data = click.option(
 )
 input_data_type = click.option(
     "--input-type",
-    help="Type of data file i.e. 'tab' for tsv or 'comma' for csv files",
-    type=str,
-    default=",",
+    help="Separator of the gene data file: 'comma' (csv), 'tab' (tsv) or 'semicolon'",
+    type=click.Choice(["comma", "tab", "semicolon"], case_sensitive=False),
+    default="comma",
+    show_default=True,
 )
 analysis_name = click.option(
     "--name",
@@ -48,17 +48,24 @@ has_uniprot = click.option(
     default=True,
     help="Boolean value indicating whether the gene data file has uniprot ids or not.",
 )
-system_name = click.option(
-    "--os",
-    type=click.Choice(["linux", "mac", "windows"], case_sensitive=False),
-    help="The OS system on which is the script is running",
-    multiple=False,
-)
-chromedriver_path = click.option(
-    "--chromedriver-path",
-    help="The path where the chromedriver can be found on the users computer",
+surechembl_source = click.option(
+    "--surechembl-source",
+    help=(
+        "SureChEMBL bulk data to use: 'latest' (default, read from the EBI server), a release "
+        "date such as 2026-09-22, a URL, or a local folder with the downloaded Parquet files"
+    ),
     type=str,
-    required=True,
+    default="latest",
+    show_default=True,
+)
+patent_sections = click.option(
+    "--sections",
+    help=(
+        "Only count a chemical if it appears in these patent sections. Repeat the option for "
+        "several sections, e.g. --sections claims --sections abstract. Default: any section"
+    ),
+    type=click.Choice(list(SECTIONS), case_sensitive=False),
+    multiple=True,
 )
 patent_year = click.option(
     "--year",
@@ -110,70 +117,43 @@ def run_chemical_extractor(
 
 @main.command(help="Extract patent for filtered chemicals")
 @analysis_name
-@system_name
-@chromedriver_path
 @patent_year
+@surechembl_source
+@patent_sections
 @from_chemical
 @chemcial_data
 def run_patent_extractor(
     name: str,
-    os: str,
-    chromedriver_path: str,
-    year: str,
+    year: int,
+    surechembl_source: str,
+    sections: tuple,
     chemical: bool,
     chemical_data: str,
 ) -> None:
     """Extracting patent from chemical data."""
-    click.echo(f"Starting to pre-process the chemical data for patent retrieval")
+    click.echo("Starting to pre-process the chemical data for patent retrieval")
 
-    if chemical:
-        df = pd.read_csv(chemical_data, sep="\t", dtype=str)
+    with SureChEMBLBulk(surechembl_source) as bulk:
+        if chemical:
+            df = pd.read_csv(chemical_data, sep="\t", dtype=str)
+            df.to_csv(f"{PATENT_DIR}/{name}_chemicals.tsv", sep="\t", index=False)
+            harmonize_chemicals(analysis_name=name, from_genes=False, bulk=bulk)
+        else:
+            harmonize_chemicals(analysis_name=name, bulk=bulk)
 
-        df.to_csv(f"{PATENT_DIR}/{name}_chemicals.tsv", sep="\t", index=False)
-
-        harmonize_chemicals(analysis_name=name, from_genes=False)
-    else:
-        harmonize_chemicals(analysis_name=name)
-
-    click.echo(f"Starting the patent extractor pipeline for {name}")
-
-    patent_df = extract_patent(
-        analysis_name=name,
-        chrome_driver_path=chromedriver_path,
-        os_system=os,
-        patent_year=year,
-    )
+        click.echo(f"Starting the patent extractor pipeline for {name}")
+        patent_df = extract_patent(
+            analysis_name=name,
+            patent_year=year,
+            sections=[s.lower() for s in sections] or None,
+            bulk=bulk,
+        )
 
     if patent_df.empty:
-        click.echo(f"No patents found!")
+        click.echo("No patents found!")
         return None
 
-    # Since the original patent data has chemical with no patents, we remove those entries from the data
-    patent_df = patent_df[~patent_df["patent_id"].isna()]
-    patent_df.to_csv(
-        f"{PATENT_DIR}/cleaned_{name}_patent_data.tsv", sep="\t", index=False
-    )
-
-    if chemical:
-        click.echo(f"Done with retrival of patents")
-        click.echo(f"Data file can be found under {PATENT_DIR}")
-        return
-
-    gene_chemical_data = json.load(open(f"{MAPPER_DIR}/{name}_gene_to_chemicals.json"))
-    chemical_to_gene_mapper = defaultdict(set)
-
-    for gene, chemicals in tqdm(gene_chemical_data.items()):
-        for chemical in chemicals:
-            chemical_to_gene_mapper[chemical].add(gene)
-
-    patent_df["genes"] = patent_df["chembl"].map(
-        lambda x: ", ".join(chemical_to_gene_mapper[x])
-    )
-
-    patent_df.to_csv(f"{PATENT_DIR}/{name}_gene_patent_data.tsv", sep="\t", index=False)
-
-    click.echo(f"Done with retrival of patents")
-    click.echo(f"Data file can be found under {PATENT_DIR}")
+    _save_patent_outputs(name, patent_df, with_genes=not chemical)
 
 
 @main.command(help="Run the PEMT tool with gene data")
@@ -181,75 +161,77 @@ def run_patent_extractor(
 @input_data
 @input_data_type
 @has_uniprot
-@chromedriver_path
-@system_name
 @patent_year
+@surechembl_source
+@patent_sections
 def run_pemt(
     name: str,
     data: str,
     input_type: str,
     uniprot: bool,
-    chromedriver_path: str,
-    os: str,
-    year: str,
+    year: int,
+    surechembl_source: str,
+    sections: tuple,
 ) -> None:
     """Runs the PEMT tool with all the components together."""
     click.echo(f"Starting to run PEMT workflow for {name}")
-
-    click.echo(f"Running the chemical extractor pipeline")
-
-    if uniprot:
-        with_uniprot = True
-    else:
-        with_uniprot = False
+    click.echo("Running the chemical extractor pipeline")
 
     gene_chemical_dict = extract_chemicals(
         analysis_name=name,
         gene_file_path=data,
         file_separator=input_type,
-        is_uniprot=with_uniprot,
+        is_uniprot=bool(uniprot),
     )
 
     click.echo(
         f"Completed running the chemical extractor pipeline for {len(gene_chemical_dict)} genes."
     )
 
-    click.echo(f"Ppre-processing the chemical data for patent retrieval")
+    with SureChEMBLBulk(surechembl_source) as bulk:
+        click.echo("Pre-processing the chemical data for patent retrieval")
+        harmonize_chemicals(analysis_name=name, bulk=bulk)
 
-    harmonize_chemicals(analysis_name=name)
-
-    click.echo(f"Running the patent extractor pipeline")
-
-    patent_df = extract_patent(
-        analysis_name=name,
-        chrome_driver_path=chromedriver_path,
-        os_system=os,
-        patent_year=year,
-    )
+        click.echo("Running the patent extractor pipeline")
+        patent_df = extract_patent(
+            analysis_name=name,
+            patent_year=year,
+            sections=[s.lower() for s in sections] or None,
+            bulk=bulk,
+        )
 
     if patent_df.empty:
-        click.echo(f"No patents found!")
+        click.echo("No patents found!")
         return None
 
-    # Since the original patent data has chemical with no patents, we remove those entries from the data
-    patent_df = patent_df[~patent_df["patent_id"].isna()]
-    patent_df.to_csv(
-        f"{PATENT_DIR}/cleaned_{name}_patent_data.tsv", sep="\t", index=False
-    )
+    _save_patent_outputs(name, patent_df, with_genes=True)
 
-    chemical_to_gene_mapper = defaultdict(set)
 
-    for gene, chemicals in tqdm(gene_chemical_data.items()):
-        for chemical in chemicals:
-            chemical_to_gene_mapper[chemical].add(gene)
+def _save_patent_outputs(name: str, patent_df: pd.DataFrame, with_genes: bool) -> None:
+    """For gene based runs, add the genes to the patent table and save it.
 
-    patent_df["genes"] = patent_df["chembl"].map(
-        lambda x: ", ".join(chemical_to_gene_mapper[x])
-    )
+    The patent table itself (``<name>_patent_data.tsv``) is written by ``extract_patent``.
+    """
+    if with_genes:
+        with open(f"{MAPPER_DIR}/{name}_gene_to_chemicals.json") as f:
+            gene_chemical_data = json.load(f)
 
-    patent_df.to_csv(f"{PATENT_DIR}/{name}_gene_patent_data.tsv", sep="\t", index=False)
+        chemical_to_gene_mapper = defaultdict(set)
+        for gene, chemicals in gene_chemical_data.items():
+            for chemical in chemicals:
+                chemical_to_gene_mapper[chemical].add(gene)
 
-    click.echo(f"Done with retrival of patents")
+        patent_df = patent_df.assign(
+            genes=patent_df["chembl"].map(
+                lambda x: ", ".join(sorted(chemical_to_gene_mapper[x]))
+            )
+        )
+        patent_df.to_csv(
+            f"{PATENT_DIR}/{name}_gene_patent_data.tsv", sep="\t", index=False
+        )
+
+    click.echo("Done with retrieval of patents")
+    click.echo(f"Data file can be found under {PATENT_DIR}")
 
 
 if __name__ == "__main__":

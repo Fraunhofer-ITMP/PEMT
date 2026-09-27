@@ -16,8 +16,6 @@ from pemt.patent_extractor.patent_enrichment import extract_patent
 
 logger = logging.getLogger(__name__)
 
-chromedriver_path = "C:/Users/Yojana.Gadiya/Downloads/chromedriver"
-
 
 def get_top_disease():
     """Get top 5 rare diseases based on the epidemiology found in Orphanet"""
@@ -87,7 +85,7 @@ def get_top_gene():
     gene_prelevance_df.to_csv("orphanet_gene_by_prevelance.tsv", sep="\t", index=False)
 
 
-def run_from_gene_pipeline(name: str, genes: list, os: str):
+def run_from_gene_pipeline(name: str, genes: list):
     extract_chemicals(
         analysis_name=name,
         gene_list=genes,
@@ -96,12 +94,7 @@ def run_from_gene_pipeline(name: str, genes: list, os: str):
 
     harmonize_chemicals(analysis_name=name, from_genes=True)
 
-    patent_df = extract_patent(
-        analysis_name=name,
-        chrome_driver_path=chromedriver_path,
-        os_system=os,
-        patent_year=2000,
-    )
+    patent_df = extract_patent(analysis_name=name, patent_year=2000)
 
     if patent_df.empty:
         logger.info(f"No patents found!")
@@ -130,7 +123,7 @@ def main():
     df = df[df["prevalence count"].astype(int) > 9]
     gene_list = set(df["Symbol"].to_list())
 
-    run_from_gene_pipeline(name="rare disease", genes=list(gene_list), os="windows")
+    run_from_gene_pipeline(name="rare disease", genes=list(gene_list))
 
 
 if __name__ == "__main__":

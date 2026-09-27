@@ -1,14 +1,14 @@
+exclude: '^(data/|example/.*\.(xml|tsv)$|tests/resources/)'
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v1.2.3
+    rev: v5.0.0
     hooks:
       - id: trailing-whitespace
-        exclude: '^data/'
       - id: end-of-file-fixer
-        exclude: '^data/'
       - id: debug-statements
       - id: check-yaml
+      - id: check-toml
   - repo: https://github.com/psf/black
-    rev: 22.3.0
+    rev: 25.1.0
     hooks:
       - id: black

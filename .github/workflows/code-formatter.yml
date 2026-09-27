@@ -1,16 +1,14 @@
 name: code-formatter
-on: [push]
+
+on:
+  push:
+  pull_request:
+
 jobs:
   linting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.8
-      - name: Linting
-        run: |
-          pip install pre-commit || pre-commit install
-          pre-commit run --files src/*
-          pre-commit run --files docs/*
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: pre-commit
+        run: uvx pre-commit run --all-files --show-diff-on-failure

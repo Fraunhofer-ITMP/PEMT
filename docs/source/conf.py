@@ -24,17 +24,16 @@ author = "Yojana Gadiya and Andrea Zaliani"
 release = "0.1.0"
 
 parsed_version = re.match(
-    "(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)(?:-(?P<release>[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+(?P<build>[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?",
+    r"(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)(?:-(?P<release>[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+(?P<build>[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?",
     release,
 )
-version = parsed_version.expand("\g<major>.\g<minor>.\g<patch>")
+version = parsed_version.expand(r"\g<major>.\g<minor>.\g<patch>")
 
-tags = set()
-
+# ``tags`` is provided by Sphinx; do not replace it.
 if parsed_version.group("release"):
     tags.add("prerelease")
 
-language = None
+language = "en"
 exclude_patterns = []
 pygments_style = "sphinx"
 todo_include_todos = True

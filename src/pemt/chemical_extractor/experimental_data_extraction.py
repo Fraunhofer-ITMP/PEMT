@@ -81,11 +81,11 @@ def target_to_chemical(
 
     :param protein: The protein name or identifier
     :param protein_mapping: A dictionary mapping the HGNC symbols to UNIPROT identifiers (a list, or a
-    string with several ids separated by "," or "|"), e.g. from :func:`pemt.utils.symbols_to_uniprot`.
-    By default, the value is set to None.
+        string with several ids separated by "," or "|"), e.g. from :func:`pemt.utils.symbols_to_uniprot`.
+        By default, the value is set to None.
     :param is_uniprot: Boolean indicating whether the protein is an HGNC symbol or UNIPROT identifier.
-    If using UniProt ids for protein, set the value to "True" and the protein_mapping parameter can be omitted.
-    If using HGNC symbols, then the protein mapping dictionary needs to be provided.
+        If using UniProt ids for protein, set the value to "True" and the protein_mapping parameter can be
+        omitted. If using HGNC symbols, then the protein mapping dictionary needs to be provided.
     :returns: ChEMBL ids of the active chemicals, without duplicates.
     """
     if is_uniprot:
@@ -144,11 +144,11 @@ def extract_chemicals(
     :param analysis_name: The name of the analysis you want to run. This name would be used to save the resultant file
     :param gene_list: The list of gene you want to extract chemicals for.
     :param gene_file_path: The path of the gene file
-    :param file_separator: The separator used within the file. This can be 'comma', 'tab', or 'semicolon'.  By default,
-    the file separator is set to csv.
-    :param is_uniprot: A boolean value indicating whether the given gene list or file containing uniprot ids or HGNC
-    symbols. By default, the value is set to False indicating that a "symbol" column is present with the respective
-    HGNC symbols. If set to True, the file with "uniprot" column is expected.
+    :param file_separator: The separator used within the file. This can be 'comma', 'tab', or 'semicolon'.
+        By default, the file separator is set to csv.
+    :param is_uniprot: A boolean value indicating whether the given gene list or file contains uniprot ids or
+        HGNC symbols. By default, the value is set to False indicating that a "symbol" column is present with
+        the respective HGNC symbols. If set to True, the file with "uniprot" column is expected.
     """
 
     # Loop to get and store the genes-chemical information from ChEMBL

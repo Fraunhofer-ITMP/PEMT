@@ -20,7 +20,7 @@ authors:
 title: "Patent EnrichMent tool (PEMT)"
 version: 0.1.0
 doi: 10.1093/bioinformatics/btac716
-date-released: 2022-07-14
+date-released: 2026-09-28
 url: "https://github.com/Fraunhofer-ITMP/PEMT"
 license: MIT License
 preferred-citation:
